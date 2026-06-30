@@ -129,6 +129,24 @@
                 </div>
             </div>
 
+            {{-- Services Offered (Provider Only) --}}
+            <div id="skills-section" class="hidden space-y-3">
+                <label class="block text-sm font-medium text-slate-300">Services Offered (Select all that apply)</label>
+                <div class="grid grid-cols-2 gap-3 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.08]">
+                    @foreach($skills as $skill)
+                        <label class="flex items-center gap-3 cursor-pointer group py-1.5">
+                            <input type="checkbox" name="skills[]" value="{{ $skill->id }}" 
+                                class="rounded border-white/[0.1] bg-white/[0.05] text-indigo-600 focus:ring-indigo-500/50 focus:ring-offset-0 transition-all"
+                                {{ is_array(old('skills')) && in_array($skill->id, old('skills')) ? 'checked' : '' }}>
+                            <span class="text-sm text-slate-300 group-hover:text-white transition-colors">{{ $skill->name }}</span>
+                        </label>
+                    @endforeach
+                </div>
+                @error('skills')
+                    <p class="mt-1 text-sm text-rose-400">{{ $message }}</p>
+                @enderror
+            </div>
+
             {{-- Password --}}
             <div>
                 <label for="password" class="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
@@ -189,5 +207,29 @@
             eyeClosed.classList.add('hidden');
         }
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const roleInputs = document.querySelectorAll('input[name="role"]');
+        const skillsSection = document.getElementById('skills-section');
+        const skillCheckboxes = skillsSection.querySelectorAll('input[type="checkbox"]');
+
+        function toggleSkillsVisibility() {
+            const selectedRole = document.querySelector('input[name="role"]:checked')?.value;
+            if (selectedRole === 'provider') {
+                skillsSection.classList.remove('hidden');
+            } else {
+                skillsSection.classList.add('hidden');
+                // Clear selected skills if customer
+                skillCheckboxes.forEach(cb => cb.checked = false);
+            }
+        }
+
+        roleInputs.forEach(input => {
+            input.addEventListener('change', toggleSkillsVisibility);
+        });
+
+        // Initialize on load
+        toggleSkillsVisibility();
+    });
 </script>
 @endsection

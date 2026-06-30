@@ -15,6 +15,7 @@
     <div class="flex min-h-screen">
 
         {{-- ===== SIDEBAR ===== --}}
+        @auth
         <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900/95 backdrop-blur-xl border-r border-white/[0.06] transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col">
 
             {{-- Brand --}}
@@ -66,7 +67,7 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
                         My Reviews
                     </a>
-                    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-white/[0.05] transition-all duration-200">
+                    <a href="{{ route('provider.profile.edit') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('provider.profile.edit') ? 'bg-indigo-500/10 text-indigo-400 border-l-2 border-indigo-500' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]' }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                         My Profile
                     </a>
@@ -93,9 +94,13 @@
             {{-- User Info --}}
             <div class="p-4 border-t border-white/[0.06]">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-sm font-bold text-white shadow-lg">
-                        {{ auth()->user()->initials }}
-                    </div>
+                    @if(auth()->user()->profile_photo_url)
+                        <img src="{{ auth()->user()->profile_photo_url }}" alt="{{ auth()->user()->name }}" class="w-10 h-10 rounded-xl object-cover border border-white/10 shadow-lg shrink-0">
+                    @else
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-sm font-bold text-white shadow-lg shrink-0">
+                            {{ auth()->user()->initials }}
+                        </div>
+                    @endif
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-medium text-white truncate">{{ auth()->user()->name }}</p>
                         <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium
@@ -114,23 +119,27 @@
                 </div>
             </div>
         </aside>
+        @endauth
 
         {{-- ===== MAIN CONTENT ===== --}}
-        <div class="flex-1 lg:ml-64">
+        <div class="flex-1 @auth lg:ml-64 @endauth">
 
             {{-- Top Bar --}}
             <header class="sticky top-0 z-40 backdrop-blur-xl bg-slate-950/80 border-b border-white/[0.06]">
                 <div class="flex items-center justify-between px-6 py-4">
                     <div class="flex items-center gap-4">
                         {{-- Mobile menu toggle --}}
+                        @auth
                         <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.05] transition-all">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                             </svg>
                         </button>
+                        @endauth
                         <h1 class="text-xl font-semibold text-white">@yield('title', 'Dashboard')</h1>
                     </div>
                     <div class="flex items-center gap-3">
+                        @auth
                         {{-- Notification bell --}}
                         <button class="relative p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.05] transition-all">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,6 +147,18 @@
                             </svg>
                             <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-indigo-500 rounded-full"></span>
                         </button>
+                        @else
+                        <nav class="flex items-center gap-4">
+                            <a href="{{ route('login') }}" class="px-4 py-2.5 text-slate-300 hover:text-white text-sm font-medium transition-colors">
+                                Log In
+                            </a>
+                            @if (Route::has('register'))
+                                <a href="{{ route('register') }}" class="px-5 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.1] text-slate-300 hover:bg-white/[0.1] hover:text-white text-sm font-medium transition-all">
+                                    Register
+                                </a>
+                            @endif
+                        </nav>
+                        @endauth
                     </div>
                 </div>
             </header>

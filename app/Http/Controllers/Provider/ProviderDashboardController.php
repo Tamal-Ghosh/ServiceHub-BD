@@ -12,6 +12,9 @@ class ProviderDashboardController extends Controller
      */
     public function index()
     {
+        if (!auth()->user()->is_approved) {
+            return redirect()->route('provider.pending');
+        }
         return view('provider.dashboard');
     }
 }

@@ -19,8 +19,11 @@
         </p>
 
         <div class="mt-8 space-y-3">
-            <a href="{{ route('login') }}" class="block w-full py-3 px-6 rounded-xl bg-white/[0.06] border border-white/[0.1] text-slate-300 font-medium hover:bg-white/[0.1] transition-all duration-200">
-                Go Back to Login
+            <a href="{{ route('provider.profile.edit') }}" class="block w-full py-3 px-6 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-medium shadow-lg shadow-indigo-500/25 transition-all duration-200">
+                Complete/Edit Profile
+            </a>
+            <a href="{{ route('provider.dashboard') }}" class="block w-full py-3 px-6 rounded-xl bg-white/[0.06] border border-white/[0.1] text-slate-300 font-medium hover:bg-white/[0.1] transition-all duration-200">
+                Go to Dashboard
             </a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf

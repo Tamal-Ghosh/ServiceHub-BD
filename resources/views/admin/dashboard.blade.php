@@ -11,6 +11,19 @@
         <p class="text-slate-400 mt-1">Platform overview and management</p>
     </div>
 
+    {{-- Session Alerts --}}
+    @if(session('success'))
+        <div class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm animate-fade-up">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm animate-fade-up">
+            {{ session('error') }}
+        </div>
+    @endif
+
     {{-- Stat Cards --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
 
@@ -81,6 +94,7 @@
                                 <th class="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-6 py-4">City</th>
                                 <th class="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-6 py-4">Registered</th>
                                 <th class="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-6 py-4">Status</th>
+                                <th class="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-6 py-4">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-white/[0.04]">
@@ -101,6 +115,15 @@
                                         <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-amber-500/10 text-amber-400">
                                             Pending
                                         </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <form method="POST" action="{{ route('admin.providers.approve', $provider->id) }}" class="inline-block">
+                                            @csrf
+                                            <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-all hover:-translate-y-0.5">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                                Approve
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach

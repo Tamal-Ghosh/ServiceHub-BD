@@ -1,15 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Customer\CustomerDashboardController;
 use App\Http\Controllers\Provider\ProviderDashboardController;
+use App\Http\Controllers\Provider\ProviderProfileController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 
 // Landing page
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Guest routes (register & login)
 Route::middleware('guest')->group(function () {
@@ -22,6 +22,9 @@ Route::middleware('guest')->group(function () {
 // Logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
+// Public provider profile
+Route::get('/provider/{id}/profile', [ProviderProfileController::class, 'show'])->name('provider.profile.show');
+
 // Customer routes
 Route::middleware(['auth', 'role:customer'])->prefix('customer')->name('customer.')->group(function () {
     Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('dashboard');
@@ -33,9 +36,17 @@ Route::middleware(['auth', 'role:provider'])->prefix('provider')->name('provider
     Route::get('/pending', function () {
         return view('provider.pending');
     })->name('pending');
+
+    // Profile management
+    Route::get('/profile/edit', [ProviderProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProviderProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/photo', [ProviderProfileController::class, 'uploadPhoto'])->name('profile.photo');
+    Route::delete('/profile/photo', [ProviderProfileController::class, 'deletePhoto'])->name('profile.photo.delete');
+    Route::put('/profile/availability', [ProviderProfileController::class, 'updateAvailability'])->name('profile.availability');
 });
 
 // Admin routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::post('/providers/{user}/approve', [AdminDashboardController::class, 'approve'])->name('providers.approve');
 });

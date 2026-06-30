@@ -15,7 +15,8 @@ class AuthController extends Controller
      */
     public function showRegistrationForm()
     {
-        return view('auth.register');
+        $skills = \App\Models\Skill::orderBy('name')->get();
+        return view('auth.register', compact('skills'));
     }
 
     /**
@@ -30,6 +31,8 @@ class AuthController extends Controller
             'city' => 'nullable|string|max:100',
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|in:customer,provider',
+            'skills' => 'required_if:role,provider|array',
+            'skills.*' => 'exists:skills,id',
         ]);
 
         $user = User::create([
@@ -41,6 +44,13 @@ class AuthController extends Controller
             'role' => $request->role,
             'is_approved' => $request->role === 'customer', // Customers auto-approved
         ]);
+
+        if ($user->role === 'provider') {
+            $user->providerProfile()->create();
+            if ($request->has('skills')) {
+                $user->skills()->sync($request->skills);
+            }
+        }
 
         Auth::login($user);
 
@@ -72,17 +82,6 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             $user = Auth::user();
-
-            // Check if provider is approved
-            if ($user->isProvider() && !$user->is_approved) {
-                Auth::logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-
-                return back()->withErrors([
-                    'email' => 'Your provider account is pending approval. Please wait for admin verification.',
-                ]);
-            }
 
             return $this->redirectBasedOnRole($user);
         }

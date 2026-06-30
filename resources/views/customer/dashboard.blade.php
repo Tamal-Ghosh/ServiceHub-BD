@@ -70,7 +70,7 @@
         <h3 class="text-lg font-semibold text-white mb-4">Quick Actions</h3>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
-            <a href="#" class="group backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6 hover:bg-indigo-500/[0.08] hover:border-indigo-500/20 transition-all duration-300 hover:-translate-y-1">
+            <a href="{{ route('home') }}" class="group backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6 hover:bg-indigo-500/[0.08] hover:border-indigo-500/20 transition-all duration-300 hover:-translate-y-1">
                 <div class="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center mb-4 group-hover:bg-indigo-500/20 transition-colors">
                     <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </div>
@@ -86,7 +86,7 @@
                 <p class="text-sm text-slate-400">Track your active and past bookings</p>
             </a>
 
-            <a href="#" class="group backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6 hover:bg-emerald-500/[0.08] hover:border-emerald-500/20 transition-all duration-300 hover:-translate-y-1">
+            <a href="{{ route('home') }}" class="group backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6 hover:bg-emerald-500/[0.08] hover:border-emerald-500/20 transition-all duration-300 hover:-translate-y-1">
                 <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4 group-hover:bg-emerald-500/20 transition-colors">
                     <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
                 </div>
@@ -105,7 +105,7 @@
             </div>
             <p class="text-slate-400 font-medium">No bookings yet</p>
             <p class="text-sm text-slate-500 mt-1">Find a provider to get started!</p>
-            <a href="#" class="inline-flex items-center gap-2 mt-4 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-all duration-200 hover:-translate-y-0.5">
+            <a href="{{ route('home') }}" class="inline-flex items-center gap-2 mt-4 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-all duration-200 hover:-translate-y-0.5">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 Find a Provider
             </a>

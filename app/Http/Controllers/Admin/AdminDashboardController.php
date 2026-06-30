@@ -27,4 +27,18 @@ class AdminDashboardController extends Controller
             'recent_users'
         ));
     }
+
+    /**
+     * Approve a pending provider.
+     */
+    public function approve(User $user)
+    {
+        if ($user->role !== 'provider') {
+            return back()->with('error', 'Only provider accounts can be approved.');
+        }
+
+        $user->update(['is_approved' => true]);
+
+        return redirect()->route('admin.dashboard')->with('success', "Provider {$user->name} has been approved successfully!");
+    }
 }
