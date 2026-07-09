@@ -45,8 +45,24 @@
                     {{-- Start Time --}}
                     <div>
                         <label for="start_time" class="block text-sm font-medium text-slate-300 mb-2">Start Time</label>
-                        <input type="time" name="start_time" id="start_time" value="{{ old('start_time', '09:00') }}"
-                            class="w-full bg-slate-900/60 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all" required>
+                        <select name="start_time" id="start_time" class="w-full bg-slate-900/60 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all appearance-none" required style="background-image: url(&quot;data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e&quot;); background-position: right 0.75rem center; background-repeat: no-repeat; background-size: 1.25em 1.25em; padding-right: 2.5rem;">
+                            @php
+                                $startTimeObj = \Carbon\Carbon::createFromTimeString('08:00:00');
+                                $endTimeObj = \Carbon\Carbon::createFromTimeString('22:00:00');
+                            @endphp
+                            @while($startTimeObj <= $endTimeObj)
+                                @php
+                                    $timeVal = $startTimeObj->format('H:i');
+                                    $timeLabel = $startTimeObj->format('g:i A');
+                                @endphp
+                                <option value="{{ $timeVal }}" class="bg-slate-900 text-white" {{ old('start_time', '09:00') == $timeVal ? 'selected' : '' }}>
+                                    {{ $timeLabel }}
+                                </option>
+                                @php
+                                    $startTimeObj->addMinutes(30);
+                                @endphp
+                            @endwhile
+                        </select>
                     </div>
 
                     {{-- Duration --}}
