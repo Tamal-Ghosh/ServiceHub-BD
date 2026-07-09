@@ -184,6 +184,15 @@
                                         {{ $review->comment }}
                                     </p>
                                 @endif
+                                
+                                @if($review->reply)
+                                    <div class="mt-3 ml-10 p-3 rounded-lg bg-indigo-500/[0.04] border border-indigo-500/10">
+                                        <span class="text-xs font-bold text-indigo-400 block mb-1">Reply from {{ $provider->name }}:</span>
+                                        <p class="text-xs text-slate-300 italic leading-relaxed">
+                                            "{{ $review->reply }}"
+                                        </p>
+                                    </div>
+                                @endif
                             </div>
                         @endforeach
                     </div>

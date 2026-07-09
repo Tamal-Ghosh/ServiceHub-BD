@@ -203,6 +203,7 @@
                                 <th class="p-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Date</th>
                                 <th class="p-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Price</th>
                                 <th class="p-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                                <th class="p-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Review & Feedback</th>
                                 <th class="p-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Notes</th>
                             </tr>
                         </thead>
@@ -233,6 +234,44 @@
                                             </span>
                                         @endif
                                     </td>
+                                    <td class="p-4 text-xs">
+                                        @if($booking->status === 'completed')
+                                            @if($booking->review)
+                                                <div class="space-y-1.5 max-w-xs">
+                                                    <div class="flex items-center gap-1 text-amber-400 font-bold">
+                                                        ★ {{ $booking->review->rating }}
+                                                    </div>
+                                                    @if($booking->review->comment)
+                                                        <p class="text-slate-300 italic text-[11px] leading-snug whitespace-pre-line">"{{ $booking->review->comment }}"</p>
+                                                    @endif
+                                                    
+                                                    @if($booking->review->reply)
+                                                        <div class="bg-white/[0.02] border border-white/[0.04] p-1.5 rounded mt-1">
+                                                            <span class="text-[10px] text-indigo-400 font-bold block">Your Reply:</span>
+                                                            <p class="text-slate-400 text-[11px] leading-snug">"{{ $booking->review->reply }}"</p>
+                                                        </div>
+                                                    @else
+                                                        <button type="button" onclick="toggleReplyForm({{ $booking->review->id }})" class="text-[10px] font-bold text-indigo-400 hover:text-indigo-300 mt-1 block">
+                                                            Reply to Review
+                                                        </button>
+                                                        <form id="reply-form-{{ $booking->review->id }}" method="POST" action="{{ route('provider.reviews.reply', $booking->review->id) }}" class="mt-2 space-y-1.5 hidden">
+                                                            @csrf
+                                                            <input type="text" name="reply" placeholder="Write a reply..." required
+                                                                class="w-full bg-slate-950 border border-white/10 rounded px-2.5 py-1 text-[11px] text-white focus:outline-none focus:border-indigo-500">
+                                                            <div class="flex justify-end gap-1.5">
+                                                                <button type="button" onclick="toggleReplyForm({{ $booking->review->id }})" class="text-[9px] text-slate-500 hover:text-slate-300 font-bold">Cancel</button>
+                                                                <button type="submit" class="text-[9px] text-white bg-indigo-600 hover:bg-indigo-500 px-2 py-0.5 rounded font-bold">Send</button>
+                                                            </div>
+                                                        </form>
+                                                    @endif
+                                                </div>
+                                            @else
+                                                <span class="text-slate-500 text-xs">No review yet</span>
+                                            @endif
+                                        @else
+                                            <span class="text-slate-500 text-xs">—</span>
+                                        @endif
+                                    </td>
                                     <td class="p-4 text-slate-400 text-xs italic max-w-xs truncate">
                                         @if($booking->status === 'cancelled' && $booking->cancellation_reason)
                                             Cancelled: "{{ $booking->cancellation_reason }}"
@@ -249,4 +288,15 @@
         @endif
     </div>
 </div>
+
+<script>
+    function toggleReplyForm(reviewId) {
+        const form = document.getElementById(`reply-form-${reviewId}`);
+        if (form.classList.contains('hidden')) {
+            form.classList.remove('hidden');
+        } else {
+            form.classList.add('hidden');
+        }
+    }
+</script>
 @endsection
