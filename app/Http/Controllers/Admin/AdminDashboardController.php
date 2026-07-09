@@ -22,6 +22,9 @@ class AdminDashboardController extends Controller
         $pending_withdrawals = \App\Models\Withdrawal::where('status', 'pending')->with('provider')->latest()->get();
         $recent_withdrawals = \App\Models\Withdrawal::whereIn('status', ['approved', 'rejected'])->with('provider')->latest()->take(10)->get();
 
+        $all_bookings = \App\Models\Booking::with(['customer', 'provider', 'payment'])->latest()->get();
+        $all_users = \App\Models\User::latest()->get();
+
         return view('admin.dashboard', compact(
             'total_users',
             'total_providers',
@@ -29,7 +32,9 @@ class AdminDashboardController extends Controller
             'pending_providers',
             'recent_users',
             'pending_withdrawals',
-            'recent_withdrawals'
+            'recent_withdrawals',
+            'all_bookings',
+            'all_users'
         ));
     }
 
