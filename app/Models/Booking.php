@@ -43,4 +43,12 @@ class Booking extends Model
     {
         return $this->hasOne(Payment::class);
     }
+
+    /**
+     * Get the review details associated with this booking.
+     */
+    public function review(): HasOne
+    {
+        return $this->hasOne(Review::class);
+    }
 }

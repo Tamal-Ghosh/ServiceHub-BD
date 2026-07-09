@@ -136,16 +136,29 @@
                     @endif
 
                     {{-- Actions --}}
-                    @if(in_array($booking->status, ['pending', 'accepted', 'pending_payment']))
+                    @if(in_array($booking->status, ['pending', 'accepted', 'pending_payment', 'completed']))
                         <div class="flex justify-end items-center gap-3 pt-2">
                             @if($booking->status === 'pending_payment')
                                 <a href="{{ route('payment.show', $booking->id) }}" class="px-4 py-2 text-xs font-semibold text-white bg-pink-600 hover:bg-pink-500 rounded-xl transition-all shadow-md shadow-pink-600/10">
                                     Pay Now (bKash)
                                 </a>
                             @endif
-                            <button onclick="openCancelModal({{ $booking->id }})" class="px-4 py-2 text-xs font-semibold text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-xl transition-all">
-                                Cancel Booking
-                            </button>
+                            @if($booking->status === 'completed')
+                                @if($booking->review)
+                                    <span class="px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+                                        Reviewed ★{{ $booking->review->rating }}
+                                    </span>
+                                @else
+                                    <button onclick="openReviewModal({{ $booking->id }}, '{{ $booking->provider->name }}')" class="px-4 py-2 text-xs font-semibold text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 rounded-xl transition-all">
+                                        Review Service
+                                    </button>
+                                @endif
+                            @endif
+                            @if(in_array($booking->status, ['pending', 'accepted']))
+                                <button onclick="openCancelModal({{ $booking->id }})" class="px-4 py-2 text-xs font-semibold text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-xl transition-all">
+                                    Cancel Booking
+                                </button>
+                            @endif
                         </div>
                     @endif
                 </div>
@@ -180,6 +193,48 @@
     </div>
 </div>
 
+{{-- Review & Rating Modal --}}
+<div id="review-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
+    <div class="backdrop-blur-xl bg-slate-900 border border-white/10 rounded-2xl max-w-md w-full p-6 shadow-2xl animate-fade-in">
+        <h3 class="text-lg font-bold text-white mb-1">Review Service Provider</h3>
+        <p class="text-xs text-slate-400 mb-4">Share your feedback for <span id="review-provider-name" class="text-indigo-400 font-semibold"></span></p>
+
+        <form id="review-form" method="POST" action="" class="space-y-4">
+            @csrf
+            
+            {{-- Star Rating --}}
+            <div class="text-center">
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">Service Rating</label>
+                <div class="flex items-center justify-center gap-2.5 my-3">
+                    <input type="hidden" name="rating" id="rating-input" value="5" required>
+                    @for($i = 1; $i <= 5; $i++)
+                        <button type="button" onclick="setRating({{ $i }})" class="star-btn text-3xl text-amber-400 focus:outline-none transition-transform hover:scale-110" data-star="{{ $i }}">
+                            ★
+                        </button>
+                    @endfor
+                </div>
+            </div>
+
+            {{-- Comment --}}
+            <div>
+                <label for="comment" class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">Review Comment (Optional)</label>
+                <textarea name="comment" id="comment" rows="3" placeholder="Tell us about your experience with this provider..."
+                    class="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all resize-none"></textarea>
+                <span class="text-[10px] text-slate-500 block mt-1">Min 3 characters if provided.</span>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-2">
+                <button type="button" onclick="closeReviewModal()" class="px-4 py-2 rounded-xl text-slate-400 hover:text-white bg-white/[0.05] hover:bg-white/[0.1] text-xs font-semibold transition-all">
+                    Cancel
+                </button>
+                <button type="submit" class="px-4 py-2 rounded-xl text-white bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold shadow-md shadow-indigo-600/25 transition-all">
+                    Submit Review
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     function openCancelModal(bookingId) {
         const modal = document.getElementById('cancel-modal');
@@ -191,6 +246,35 @@
     function closeCancelModal() {
         const modal = document.getElementById('cancel-modal');
         modal.classList.add('hidden');
+    }
+
+    function openReviewModal(bookingId, providerName) {
+        const modal = document.getElementById('review-modal');
+        const form = document.getElementById('review-form');
+        document.getElementById('review-provider-name').innerText = providerName;
+        form.action = `/customer/bookings/${bookingId}/review`;
+        setRating(5); // default to 5 stars
+        modal.classList.remove('hidden');
+    }
+
+    function closeReviewModal() {
+        const modal = document.getElementById('review-modal');
+        modal.classList.add('hidden');
+    }
+
+    function setRating(rating) {
+        document.getElementById('rating-input').value = rating;
+        const stars = document.querySelectorAll('.star-btn');
+        stars.forEach(star => {
+            const val = parseInt(star.getAttribute('data-star'));
+            if (val <= rating) {
+                star.classList.remove('text-slate-600');
+                star.classList.add('text-amber-400');
+            } else {
+                star.classList.remove('text-amber-400');
+                star.classList.add('text-slate-600');
+            }
+        });
     }
 </script>
 @endsection

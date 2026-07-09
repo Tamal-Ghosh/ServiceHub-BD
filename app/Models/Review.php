@@ -10,8 +10,10 @@ class Review extends Model
     protected $fillable = [
         'provider_id',
         'customer_id',
+        'booking_id',
         'rating',
         'comment',
+        'reply',
     ];
 
     protected function casts(): array
@@ -35,5 +37,13 @@ class Review extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'customer_id');
+    }
+
+    /**
+     * Get the booking associated with the review.
+     */
+    public function booking(): BelongsTo
+    {
+        return $this->belongsTo(Booking::class);
     }
 }

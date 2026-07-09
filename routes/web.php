@@ -34,6 +34,7 @@ Route::middleware(['auth', 'role:customer'])->prefix('customer')->name('customer
     Route::post('/bookings', [\App\Http\Controllers\Customer\BookingController::class, 'store'])->name('bookings.store');
     Route::get('/bookings', [\App\Http\Controllers\Customer\BookingController::class, 'index'])->name('bookings.index');
     Route::post('/bookings/{booking}/cancel', [\App\Http\Controllers\Customer\BookingController::class, 'cancel'])->name('bookings.cancel');
+    Route::post('/bookings/{booking}/review', [\App\Http\Controllers\Customer\ReviewController::class, 'store'])->name('bookings.review');
 });
 
 // Payment checkout routes (outside prefix to preserve standard names)
@@ -62,6 +63,9 @@ Route::middleware(['auth', 'role:provider'])->prefix('provider')->name('provider
 
     // Withdrawals
     Route::post('/withdrawals', [\App\Http\Controllers\Provider\WithdrawalController::class, 'store'])->name('withdrawals.store');
+
+    // Review replies
+    Route::post('/reviews/{review}/reply', [\App\Http\Controllers\Provider\ReviewController::class, 'reply'])->name('reviews.reply');
 });
 
 // Admin routes
