@@ -61,7 +61,11 @@
 
                         {{-- Status Badge --}}
                         <div>
-                            @if($booking->status === 'pending')
+                            @if($booking->status === 'pending_payment')
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-pink-500/10 text-pink-400 border border-pink-500/20">
+                                    Unpaid (bKash)
+                                </span>
+                            @elseif($booking->status === 'pending')
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
                                     Pending Approval
                                 </span>
@@ -132,8 +136,13 @@
                     @endif
 
                     {{-- Actions --}}
-                    @if(in_array($booking->status, ['pending', 'accepted']))
-                        <div class="flex justify-end pt-2">
+                    @if(in_array($booking->status, ['pending', 'accepted', 'pending_payment']))
+                        <div class="flex justify-end items-center gap-3 pt-2">
+                            @if($booking->status === 'pending_payment')
+                                <a href="{{ route('payment.show', $booking->id) }}" class="px-4 py-2 text-xs font-semibold text-white bg-pink-600 hover:bg-pink-500 rounded-xl transition-all shadow-md shadow-pink-600/10">
+                                    Pay Now (bKash)
+                                </a>
+                            @endif
                             <button onclick="openCancelModal({{ $booking->id }})" class="px-4 py-2 text-xs font-semibold text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-xl transition-all">
                                 Cancel Booking
                             </button>

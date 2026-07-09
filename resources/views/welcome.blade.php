@@ -78,23 +78,25 @@
                 {{-- Skill Filter --}}
                 <div class="relative">
                     <label for="skill" class="block text-left text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Service Skill</label>
-                    <select name="skill" id="skill" class="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 appearance-none transition-all" style="background-image: url(&quot;data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e&quot;); background-position: right 0.75rem center; background-repeat: no-repeat; background-size: 1.25em 1.25em; padding-right: 2.5rem;">
-                        <option value="" class="bg-slate-900 text-slate-400">All Services</option>
-                        @foreach($skills as $skill)
-                            <option value="{{ $skill->id }}" class="bg-slate-900" {{ request('skill') == $skill->id ? 'selected' : '' }}>{{ $skill->name }}</option>
+                    <input type="text" name="skill" id="skill" list="skills-list" value="{{ is_numeric(request('skill')) ? ($skills->find(request('skill'))->name ?? request('skill')) : request('skill') }}" placeholder="All Services" autocomplete="off"
+                        class="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
+                    <datalist id="skills-list">
+                        @foreach($skills as $sk)
+                            <option value="{{ $sk->name }}">
                         @endforeach
-                    </select>
+                    </datalist>
                 </div>
 
                 {{-- City Filter --}}
                 <div class="relative">
                     <label for="city" class="block text-left text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">City</label>
-                    <select name="city" id="city" class="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 appearance-none transition-all" style="background-image: url(&quot;data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e&quot;); background-position: right 0.75rem center; background-repeat: no-repeat; background-size: 1.25em 1.25em; padding-right: 2.5rem;">
-                        <option value="" class="bg-slate-900 text-slate-400">All Cities</option>
-                        @foreach($cities as $city)
-                            <option value="{{ $city }}" class="bg-slate-900" {{ request('city') == $city ? 'selected' : '' }}>{{ $city }}</option>
+                    <input type="text" name="city" id="city" list="cities-list" value="{{ request('city') }}" placeholder="All Cities" autocomplete="off"
+                        class="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
+                    <datalist id="cities-list">
+                        @foreach($cities as $ct)
+                            <option value="{{ $ct }}">
                         @endforeach
-                    </select>
+                    </datalist>
                 </div>
 
                 {{-- Rating Filter --}}

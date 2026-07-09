@@ -15,6 +15,9 @@ class ProviderDashboardController extends Controller
         if (!auth()->user()->is_approved) {
             return redirect()->route('provider.pending');
         }
-        return view('provider.dashboard');
+        
+        $withdrawals = auth()->user()->withdrawals()->latest()->get();
+
+        return view('provider.dashboard', compact('withdrawals'));
     }
 }

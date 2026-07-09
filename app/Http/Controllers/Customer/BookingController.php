@@ -56,7 +56,7 @@ class BookingController extends Controller
         }
 
         $reqStart = Carbon::parse($request->start_time);
-        $reqEnd = (clone $reqStart)->addHours($request->duration);
+        $reqEnd = (clone $reqStart)->addHours((int) $request->duration);
 
         // Normalize time strings to check range correctly
         $availStart = Carbon::parse($availability->start_time);
@@ -84,7 +84,7 @@ class BookingController extends Controller
 
         foreach ($existingBookings as $exBooking) {
             $exStart = Carbon::parse($exBooking->start_time);
-            $exEnd = (clone $exStart)->addHours($exBooking->duration);
+            $exEnd = (clone $exStart)->addHours((int) $exBooking->duration);
 
             $exStartToday = Carbon::today()->setTime($exStart->hour, $exStart->minute);
             $exEndToday = Carbon::today()->setTime($exEnd->hour, $exEnd->minute);
@@ -101,7 +101,7 @@ class BookingController extends Controller
         $totalPrice = $provider->providerProfile->hourly_rate * $request->duration;
 
         // Create booking
-        Booking::create([
+        $booking = Booking::create([
             'customer_id' => auth()->id(),
             'provider_id' => $provider->id,
             'booking_date' => $request->booking_date,
@@ -109,11 +109,11 @@ class BookingController extends Controller
             'duration' => $request->duration,
             'problem_description' => $request->problem_description,
             'total_price' => $totalPrice,
-            'status' => 'pending',
+            'status' => 'pending_payment',
         ]);
 
-        return redirect()->route('customer.bookings.index')
-            ->with('success', 'Your booking request has been submitted successfully.');
+        return redirect()->route('payment.show', $booking->id)
+            ->with('info', 'Please complete bKash payment to submit your booking request.');
     }
 
     /**

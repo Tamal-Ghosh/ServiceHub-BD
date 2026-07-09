@@ -36,6 +36,12 @@ Route::middleware(['auth', 'role:customer'])->prefix('customer')->name('customer
     Route::post('/bookings/{booking}/cancel', [\App\Http\Controllers\Customer\BookingController::class, 'cancel'])->name('bookings.cancel');
 });
 
+// Payment checkout routes (outside prefix to preserve standard names)
+Route::middleware(['auth', 'role:customer'])->group(function () {
+    Route::get('/bookings/{booking}/payment', [\App\Http\Controllers\PaymentController::class, 'show'])->name('payment.show');
+    Route::post('/bookings/{booking}/payment/process', [\App\Http\Controllers\PaymentController::class, 'process'])->name('payment.process');
+});
+
 // Provider routes
 Route::middleware(['auth', 'role:provider'])->prefix('provider')->name('provider.')->group(function () {
     Route::get('/dashboard', [ProviderDashboardController::class, 'index'])->name('dashboard');
@@ -53,10 +59,16 @@ Route::middleware(['auth', 'role:provider'])->prefix('provider')->name('provider
     // Bookings management
     Route::get('/bookings', [\App\Http\Controllers\Provider\BookingController::class, 'index'])->name('bookings.index');
     Route::post('/bookings/{booking}/status', [\App\Http\Controllers\Provider\BookingController::class, 'updateStatus'])->name('bookings.status');
+
+    // Withdrawals
+    Route::post('/withdrawals', [\App\Http\Controllers\Provider\WithdrawalController::class, 'store'])->name('withdrawals.store');
 });
 
 // Admin routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::post('/providers/{user}/approve', [AdminDashboardController::class, 'approve'])->name('providers.approve');
+    
+    // Withdrawals management
+    Route::post('/withdrawals/{withdrawal}/status', [AdminDashboardController::class, 'updateWithdrawalStatus'])->name('withdrawals.status');
 });

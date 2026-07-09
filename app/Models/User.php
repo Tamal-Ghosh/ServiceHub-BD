@@ -132,6 +132,22 @@ class User extends Authenticatable
         return $this->hasMany(Booking::class, 'provider_id');
     }
 
+    /**
+     * Payments made by this user (as customer).
+     */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class, 'customer_id');
+    }
+
+    /**
+     * Withdrawals requested by this user (as provider).
+     */
+    public function withdrawals(): HasMany
+    {
+        return $this->hasMany(Withdrawal::class, 'provider_id');
+    }
+
     // ─── Accessors ─────────────────────────────────
 
     /**
@@ -187,5 +203,47 @@ class User extends Authenticatable
     {
         if (!$this->isProvider()) return 0;
         return $this->reviews()->count();
+    }
+
+    /**
+     * Get provider's total earnings (completed bookings).
+     */
+    public function getProviderTotalEarningsAttribute(): float
+    {
+        return Payment::whereIn('booking_id', $this->providerBookings()->where('status', 'completed')->pluck('id'))
+            ->sum('provider_earning');
+    }
+
+    /**
+     * Get provider's pending earnings (uncompleted/active paid bookings).
+     */
+    public function getProviderPendingEarningsAttribute(): float
+    {
+        return Payment::whereIn('booking_id', $this->providerBookings()->whereIn('status', ['pending', 'accepted', 'in_progress'])->pluck('id'))
+            ->sum('provider_earning');
+    }
+
+    /**
+     * Get provider's total withdrawn amount.
+     */
+    public function getProviderTotalWithdrawnAttribute(): float
+    {
+        return $this->withdrawals()->where('status', 'approved')->sum('amount');
+    }
+
+    /**
+     * Get provider's pending withdrawal amount.
+     */
+    public function getProviderPendingWithdrawalAttribute(): float
+    {
+        return $this->withdrawals()->where('status', 'pending')->sum('amount');
+    }
+
+    /**
+     * Get provider's withdrawable balance.
+     */
+    public function getProviderWithdrawableBalanceAttribute(): float
+    {
+        return $this->provider_total_earnings - $this->provider_total_withdrawn - $this->provider_pending_withdrawal;
     }
 }

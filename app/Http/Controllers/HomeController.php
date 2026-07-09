@@ -20,14 +20,19 @@ class HomeController extends Controller
 
         // Filter by Skill
         if ($request->filled('skill')) {
-            $query->whereHas('skills', function ($q) use ($request) {
-                $q->where('skills.id', $request->skill);
+            $skillVal = $request->skill;
+            $query->whereHas('skills', function ($q) use ($skillVal) {
+                if (is_numeric($skillVal)) {
+                    $q->where('skills.id', $skillVal);
+                } else {
+                    $q->where('skills.name', 'like', '%' . $skillVal . '%');
+                }
             });
         }
 
         // Filter by City
         if ($request->filled('city')) {
-            $query->where('city', $request->city);
+            $query->where('city', 'like', '%' . $request->city . '%');
         }
 
         // Filter by Rating

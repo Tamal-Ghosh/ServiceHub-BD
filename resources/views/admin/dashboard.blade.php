@@ -142,6 +142,87 @@
         </div>
     </div>
 
+    {{-- Pending Withdrawal Requests --}}
+    <div>
+        <h3 class="text-lg font-semibold text-white mb-4">Pending Withdrawal Requests</h3>
+        <div class="backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
+            @if($pending_withdrawals->count() > 0)
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-white/[0.06] text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                                <th class="px-6 py-4">Provider</th>
+                                <th class="px-6 py-4">Requested On</th>
+                                <th class="px-6 py-4">Method</th>
+                                <th class="px-6 py-4">Account Details</th>
+                                <th class="px-6 py-4">Amount</th>
+                                <th class="px-6 py-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/[0.04] text-sm">
+                            @foreach($pending_withdrawals as $withdrawal)
+                                <tr class="hover:bg-white/[0.02] transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-xs font-bold text-white">
+                                                {{ strtoupper(substr($withdrawal->provider->name, 0, 2)) }}
+                                            </div>
+                                            <div>
+                                                <span class="text-sm font-medium text-white block">{{ $withdrawal->provider->name }}</span>
+                                                <span class="text-[10px] text-slate-400 block">Balance: ৳{{ number_format($withdrawal->provider->provider_withdrawable_balance) }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-400">
+                                        {{ $withdrawal->created_at->format('M d, Y') }}
+                                        <span class="text-[10px] text-slate-500 block mt-0.5">{{ $withdrawal->created_at->format('g:i A') }}</span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 text-xs font-semibold">
+                                            {{ $withdrawal->payment_method }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-300 font-mono">
+                                        {{ $withdrawal->account_number }}
+                                    </td>
+                                    <td class="px-6 py-4 font-bold text-slate-200">
+                                        ৳{{ number_format($withdrawal->amount) }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2">
+                                            <form method="POST" action="{{ route('admin.withdrawals.status', $withdrawal->id) }}" class="inline-block">
+                                                @csrf
+                                                <input type="hidden" name="status" value="approved">
+                                                <button type="submit" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-all">
+                                                    Approve
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="{{ route('admin.withdrawals.status', $withdrawal->id) }}" class="inline-block">
+                                                @csrf
+                                                <input type="hidden" name="status" value="rejected">
+                                                <button type="submit" class="px-3 py-1.5 rounded-lg bg-rose-600/10 hover:bg-rose-600/20 border border-rose-600/20 text-rose-400 text-xs font-semibold transition-all">
+                                                    Reject
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <div class="p-10 text-center">
+                    <div class="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-7 h-7 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <p class="text-slate-400 font-medium">No pending withdrawal requests</p>
+                    <p class="text-sm text-slate-500 mt-1">All payout requests have been processed</p>
+                </div>
+            @endif
+        </div>
+    </div>
+
     {{-- Recent Users --}}
     <div>
         <h3 class="text-lg font-semibold text-white mb-4">Recent Users</h3>

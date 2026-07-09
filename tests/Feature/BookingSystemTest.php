@@ -79,7 +79,9 @@ class BookingSystemTest extends TestCase
                 'problem_description' => 'My fan is not working. Needs inspection.',
             ]);
 
-        $response->assertRedirect(route('customer.bookings.index'));
+        $booking = Booking::first();
+        $this->assertNotNull($booking);
+        $response->assertRedirect(route('payment.show', $booking->id));
 
         // Price is 300 * 2 = 600
         $this->assertDatabaseHas('bookings', [
@@ -89,7 +91,7 @@ class BookingSystemTest extends TestCase
             'start_time' => '10:00',
             'duration' => 2,
             'total_price' => 600,
-            'status' => 'pending',
+            'status' => 'pending_payment',
         ]);
     }
 
