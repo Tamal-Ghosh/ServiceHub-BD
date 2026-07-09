@@ -116,6 +116,22 @@ class User extends Authenticatable
         return $this->hasMany(Review::class, 'customer_id');
     }
 
+    /**
+     * Bookings made by this user (as customer).
+     */
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class, 'customer_id');
+    }
+
+    /**
+     * Bookings received by this user (as provider).
+     */
+    public function providerBookings(): HasMany
+    {
+        return $this->hasMany(Booking::class, 'provider_id');
+    }
+
     // ─── Accessors ─────────────────────────────────
 
     /**

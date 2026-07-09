@@ -28,6 +28,12 @@ Route::get('/provider/{id}/profile', [ProviderProfileController::class, 'show'])
 // Customer routes
 Route::middleware(['auth', 'role:customer'])->prefix('customer')->name('customer.')->group(function () {
     Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('dashboard');
+    
+    // Bookings
+    Route::get('/bookings/create/{provider}', [\App\Http\Controllers\Customer\BookingController::class, 'create'])->name('bookings.create');
+    Route::post('/bookings', [\App\Http\Controllers\Customer\BookingController::class, 'store'])->name('bookings.store');
+    Route::get('/bookings', [\App\Http\Controllers\Customer\BookingController::class, 'index'])->name('bookings.index');
+    Route::post('/bookings/{booking}/cancel', [\App\Http\Controllers\Customer\BookingController::class, 'cancel'])->name('bookings.cancel');
 });
 
 // Provider routes
@@ -43,6 +49,10 @@ Route::middleware(['auth', 'role:provider'])->prefix('provider')->name('provider
     Route::post('/profile/photo', [ProviderProfileController::class, 'uploadPhoto'])->name('profile.photo');
     Route::delete('/profile/photo', [ProviderProfileController::class, 'deletePhoto'])->name('profile.photo.delete');
     Route::put('/profile/availability', [ProviderProfileController::class, 'updateAvailability'])->name('profile.availability');
+
+    // Bookings management
+    Route::get('/bookings', [\App\Http\Controllers\Provider\BookingController::class, 'index'])->name('bookings.index');
+    Route::post('/bookings/{booking}/status', [\App\Http\Controllers\Provider\BookingController::class, 'updateStatus'])->name('bookings.status');
 });
 
 // Admin routes
