@@ -99,19 +99,15 @@
             <div class="backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6">
                 <h3 class="text-base font-semibold text-white mb-4">Account Info</h3>
                 <div class="space-y-3 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-slate-400">Name</span>
-                        <span class="text-white font-medium">{{ auth()->user()->name }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-slate-400">Email</span>
-                        <span class="text-white font-medium">{{ auth()->user()->email }}</span>
-                    </div>
-                    <div class="flex justify-between">
+                    <div class="flex justify-between items-center">
                         <span class="text-slate-400">Status</span>
                         <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium {{ auth()->user()->is_approved ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400' }}">
                             {{ auth()->user()->is_approved ? 'Approved' : 'Pending' }}
                         </span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Role</span>
+                        <span class="text-white font-medium">Provider</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-slate-400">Joined</span>
@@ -131,6 +127,28 @@
 
                 <div class="backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6 space-y-5">
                     <h3 class="text-base font-semibold text-white">Profile Details</h3>
+
+                    {{-- Name & Email --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-slate-300 mb-1.5">Full Name</label>
+                            <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required
+                                class="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300"
+                                placeholder="Your full name">
+                            @error('name')
+                                <p class="mt-1.5 text-sm text-rose-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-slate-300 mb-1.5">Email Address</label>
+                            <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" required
+                                class="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300"
+                                placeholder="you@example.com">
+                            @error('email')
+                                <p class="mt-1.5 text-sm text-rose-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
 
                     {{-- Bio --}}
                     <div>
@@ -293,6 +311,41 @@
                 <button type="submit"
                     class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-all hover:-translate-y-0.5">
                     Save Availability
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {{-- Change Password Card --}}
+    <div class="backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
+        <div class="px-6 py-5 border-b border-white/[0.06] flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+            <div>
+                <h3 class="text-base font-semibold text-white">Change Password</h3>
+                <p class="text-xs text-slate-500">Leave blank if you don't want to change</p>
+            </div>
+        </div>
+        <form method="POST" action="{{ route('provider.profile.password') }}" class="p-6">
+            @csrf
+            @method('PUT')
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="password" class="block text-sm font-medium text-slate-300 mb-1.5">New Password</label>
+                    <input type="password" name="password" id="password" placeholder="Minimum 6 characters" minlength="6"
+                        class="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300">
+                    @error('password') <p class="mt-1.5 text-sm text-rose-400">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label for="password_confirmation" class="block text-sm font-medium text-slate-300 mb-1.5">Confirm Password</label>
+                    <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Re-type password" minlength="6"
+                        class="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300">
+                </div>
+            </div>
+            <div class="mt-4">
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-sm font-medium transition-all hover:-translate-y-0.5">
+                    Update Password
                 </button>
             </div>
         </form>

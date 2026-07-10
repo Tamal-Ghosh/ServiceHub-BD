@@ -8,6 +8,7 @@ use App\Models\ProviderProfile;
 use App\Models\Skill;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class ProviderProfileController extends Controller
@@ -32,6 +33,8 @@ class ProviderProfileController extends Controller
     public function update(Request $request)
     {
         $request->validate([
+            'name' => 'required|string|min:3|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . Auth::id(),
             'bio' => 'nullable|string|max:1000',
             'area' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:100',
@@ -46,6 +49,8 @@ class ProviderProfileController extends Controller
 
         // Update user fields
         $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
             'city' => $request->city,
             'phone' => $request->phone,
         ]);
@@ -153,5 +158,21 @@ class ProviderProfileController extends Controller
             ->firstOrFail();
 
         return view('provider.profile.show', compact('provider'));
+    }
+
+    /**
+     * Update provider password.
+     */
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        Auth::user()->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return redirect()->route('provider.profile.edit')->with('success', 'Password updated successfully!');
     }
 }

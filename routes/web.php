@@ -60,6 +60,7 @@ Route::middleware(['auth', 'role:provider'])->prefix('provider')->name('provider
     Route::post('/profile/photo', [ProviderProfileController::class, 'uploadPhoto'])->name('profile.photo');
     Route::delete('/profile/photo', [ProviderProfileController::class, 'deletePhoto'])->name('profile.photo.delete');
     Route::put('/profile/availability', [ProviderProfileController::class, 'updateAvailability'])->name('profile.availability');
+    Route::put('/profile/password', [ProviderProfileController::class, 'updatePassword'])->name('profile.password');
 
     // Bookings management
     Route::get('/bookings', [\App\Http\Controllers\Provider\BookingController::class, 'index'])->name('bookings.index');
