@@ -35,6 +35,10 @@ Route::middleware(['auth', 'role:customer'])->prefix('customer')->name('customer
     Route::get('/bookings', [\App\Http\Controllers\Customer\BookingController::class, 'index'])->name('bookings.index');
     Route::post('/bookings/{booking}/cancel', [\App\Http\Controllers\Customer\BookingController::class, 'cancel'])->name('bookings.cancel');
     Route::post('/bookings/{booking}/review', [\App\Http\Controllers\Customer\ReviewController::class, 'store'])->name('bookings.review');
+
+    // Profile
+    Route::get('/profile', [\App\Http\Controllers\UserProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [\App\Http\Controllers\UserProfileController::class, 'update'])->name('profile.update');
 });
 
 // Payment checkout routes (outside prefix to preserve standard names)
@@ -75,4 +79,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     
     // Withdrawals management
     Route::post('/withdrawals/{withdrawal}/status', [AdminDashboardController::class, 'updateWithdrawalStatus'])->name('withdrawals.status');
+
+    // Profile
+    Route::get('/profile', [\App\Http\Controllers\UserProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [\App\Http\Controllers\UserProfileController::class, 'update'])->name('profile.update');
 });

@@ -256,7 +256,7 @@
                                                         </button>
                                                         <form id="reply-form-{{ $booking->review->id }}" method="POST" action="{{ route('provider.reviews.reply', $booking->review->id) }}" class="mt-2 space-y-1.5 hidden">
                                                             @csrf
-                                                            <input type="text" name="reply" placeholder="Write a reply..." required
+                                                            <input type="text" name="reply" placeholder="Write a reply..." minlength="3" maxlength="1000" required
                                                                 class="w-full bg-slate-950 border border-white/10 rounded px-2.5 py-1 text-[11px] text-white focus:outline-none focus:border-indigo-500">
                                                             <div class="flex justify-end gap-1.5">
                                                                 <button type="button" onclick="toggleReplyForm({{ $booking->review->id }})" class="text-[9px] text-slate-500 hover:text-slate-300 font-bold">Cancel</button>

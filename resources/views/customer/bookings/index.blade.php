@@ -176,7 +176,7 @@
         <form id="cancel-form" method="POST" action="" class="space-y-4">
             @csrf
             <div>
-                <textarea name="cancellation_reason" id="cancellation_reason" rows="3" placeholder="Reason for cancellation (e.g. My plan changed, found another way, etc.)"
+                <textarea name="cancellation_reason" id="cancellation_reason" rows="3" placeholder="Reason for cancellation (e.g. My plan changed, found another way, etc.)" minlength="5"
                     class="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all resize-none" required></textarea>
                 <span class="text-[10px] text-slate-500 block mt-1">Minimum 5 characters.</span>
             </div>
@@ -218,7 +218,7 @@
             {{-- Comment --}}
             <div>
                 <label for="comment" class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">Review Comment (Optional)</label>
-                <textarea name="comment" id="comment" rows="3" placeholder="Tell us about your experience with this provider..."
+                <textarea name="comment" id="comment" rows="3" placeholder="Tell us about your experience with this provider..." minlength="3"
                     class="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all resize-none"></textarea>
                 <span class="text-[10px] text-slate-500 block mt-1">Min 3 characters if provided.</span>
             </div>

@@ -280,7 +280,7 @@ class DatabaseSeeder extends Seeder
             $provider = User::where('email', $b['provider_email'])->first();
 
             if ($customer && $provider) {
-                Booking::create([
+                $booking = Booking::create([
                     'customer_id' => $customer->id,
                     'provider_id' => $provider->id,
                     'booking_date' => $b['booking_date'],
@@ -291,7 +291,57 @@ class DatabaseSeeder extends Seeder
                     'status' => $b['status'],
                     'cancellation_reason' => $b['cancellation_reason'] ?? null,
                 ]);
+
+                // Create payment and reviews for completed bookings
+                if ($booking->status === 'completed') {
+                    $amount = $booking->total_price;
+                    $platformCharge = $amount * 0.15;
+                    $providerEarning = $amount - $platformCharge;
+
+                    \App\Models\Payment::create([
+                        'booking_id' => $booking->id,
+                        'customer_id' => $customer->id,
+                        'transaction_id' => 'TRX' . strtoupper(bin2hex(random_bytes(4))),
+                        'amount' => $amount,
+                        'platform_charge' => $platformCharge,
+                        'provider_earning' => $providerEarning,
+                    ]);
+
+                    $review = \App\Models\Review::create([
+                        'booking_id' => $booking->id,
+                        'customer_id' => $customer->id,
+                        'provider_id' => $provider->id,
+                        'rating' => 5,
+                        'comment' => 'Very satisfied with the quick service and professionalism!',
+                    ]);
+
+                    if ($provider->email === 'provider@test.com') {
+                        $review->update([
+                            'reply' => 'Thank you! It was my pleasure to assist you.'
+                        ]);
+                    }
+                }
             }
+        }
+
+        // Seed Payouts/Withdrawals for Karim Electrician
+        $karim = User::where('email', 'provider@test.com')->first();
+        if ($karim) {
+            \App\Models\Withdrawal::create([
+                'provider_id' => $karim->id,
+                'amount' => 150.00,
+                'payment_method' => 'bKash',
+                'account_number' => '01812345678',
+                'status' => 'approved',
+            ]);
+
+            \App\Models\Withdrawal::create([
+                'provider_id' => $karim->id,
+                'amount' => 100.00,
+                'payment_method' => 'Nagad',
+                'account_number' => '01812345678',
+                'status' => 'pending',
+            ]);
         }
     }
 }

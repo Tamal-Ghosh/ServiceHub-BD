@@ -180,4 +180,46 @@ class ReviewAdminSystemTest extends TestCase
         $response->assertViewHas('all_users');
         $response->assertViewHas('all_bookings');
     }
+
+    /** @test */
+    public function customer_can_view_and_update_profile()
+    {
+        $response = $this->actingAs($this->customer)->get(route('customer.profile.edit'));
+        $response->assertStatus(200);
+
+        $updateResponse = $this->actingAs($this->customer)->put(route('customer.profile.update'), [
+            'name' => 'New Customer Name',
+            'email' => 'customer_new@test.com',
+            'phone' => '01700000000',
+            'city' => 'Rajshahi',
+        ]);
+
+        $updateResponse->assertSessionHasNoErrors();
+        $this->customer->refresh();
+        $this->assertEquals('New Customer Name', $this->customer->name);
+        $this->assertEquals('customer_new@test.com', $this->customer->email);
+        $this->assertEquals('01700000000', $this->customer->phone);
+        $this->assertEquals('Rajshahi', $this->customer->city);
+    }
+
+    /** @test */
+    public function admin_can_view_and_update_profile()
+    {
+        $response = $this->actingAs($this->admin)->get(route('admin.profile.edit'));
+        $response->assertStatus(200);
+
+        $updateResponse = $this->actingAs($this->admin)->put(route('admin.profile.update'), [
+            'name' => 'New Admin Name',
+            'email' => 'admin_new@test.com',
+            'phone' => '01800000000',
+            'city' => 'Barisal',
+        ]);
+
+        $updateResponse->assertSessionHasNoErrors();
+        $this->admin->refresh();
+        $this->assertEquals('New Admin Name', $this->admin->name);
+        $this->assertEquals('admin_new@test.com', $this->admin->email);
+        $this->assertEquals('01800000000', $this->admin->phone);
+        $this->assertEquals('Barisal', $this->admin->city);
+    }
 }

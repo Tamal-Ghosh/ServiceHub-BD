@@ -1,59 +1,111 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ServiceHub-BD
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+ServiceHub-BD is a premium, high-fidelity local service marketplace designed and built to connect customers with skilled service providers (electricians, plumbers, AC technicians, tutors, painters, carpenters, etc.) in Bangladesh. 
 
-## About Laravel
+Featuring a modern dark-mode glassmorphism user interface, the application delivers smooth layouts, micro-animations, and complete functional workflows for bookings, payments, ratings, and administration.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Key Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 1. Search & Browse System
+* Autocomplete suggestions for **City** and **Service Skill** using matching query filters.
+* Filter results dynamically by Service Category, City, and Rating.
+* Public provider detail profile pages showing bio, rates, availability schedule, and customer reviews.
 
-## Learning Laravel
+### 2. Provider Availability & Profile Management
+* Interactive weekly availability slot editor (e.g., Saturday 09:00 AM - 05:00 PM).
+* Dynamic service skill mapping (e.g., Electrician, Plumber, AC Tech).
+* Profile photo uploads and description updates.
+* Registration approval queue (unapproved providers are locked until admin reviews them).
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 3. Smart Booking Engine
+* Validation checks preventing bookings outside the provider's active days/hours.
+* Double-booking guard preventing duplicate bookings for overlapping time slots.
+* Cancellation flow with user-provided cancellation reasons.
+* Automatic price calculator (hourly rate × duration).
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 4. Mock bKash Payment Integration
+* Authentic pink checkout gateway interface validating 11-digit wallet numbers and 4-digit PIN codes.
+* 15% platform fee escrow deduction; 85% provider payout ledger credit.
+* Unique transaction ID generator (`TRX...`) to track checkouts.
 
-## Laravel Sponsors
+### 5. Provider Wallet & Withdrawal Center
+* Real-time wallet tracking: Total Earnings, Withdrawable Balance, Pending Payouts, and Total Withdrawn.
+* Pop-up payout requests (minimum ৳100 BDT) supporting bKash, Nagad, Rocket, and Bank transfers.
+* Detailed withdrawal logs tracking status (`pending`, `approved`, `rejected`).
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 6. Interactive Customer Reviews & Replies
+* Post-service review prompt (1–5 star selection and comment box) once bookings are completed.
+* Strict unique constraints preventing duplicate reviews.
+* Automatic dynamic updates of provider rating metrics.
+* Inline provider replies to reviews, visible on the provider's public profile page.
 
-### Premium Partners
+### 7. Administrative Workspace
+* Glassmorphism statistics summary cards.
+* Tabbed control tabs to approve/reject pending providers and withdrawal requests.
+* Database registry of All Bookings (trans ID details) and All Users (customer, provider, admin).
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## 🛠️ Technology Stack
+* **Framework**: Laravel 12
+* **Language**: PHP 8.2+
+* **Database**: SQLite / MySQL
+* **Styling**: Vanilla CSS + Tailwind CSS (via CDN)
+* **Testing**: PHPUnit Feature Integration Tests
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## ⚙️ Installation & Setup
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. **Clone & Navigate**:
+   ```bash
+   cd final_project
+   ```
 
-## Security Vulnerabilities
+2. **Install Backend Dependencies**:
+   ```bash
+   composer install
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+3. **Configure Environment**:
+   Duplicate `.env.example` as `.env`, configure your database, and run:
+   ```bash
+   php artisan key:generate
+   ```
 
-## License
+4. **Initialize Database & Seed Demo Data**:
+   ```bash
+   php artisan migrate:refresh --seed
+   ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+5. **Start Local Development Server**:
+   ```bash
+   php artisan serve
+   ```
+   Access the app at `http://127.0.0.1:8000`.
+
+---
+
+## 🔑 Demo Login Credentials
+
+The seeder initializes the database with pre-configured accounts:
+
+| Role | Email | Password | Details |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin@servicehub.com` | `password` | Dashboard with approvals and database registry. |
+| **Customer 1** | `customer@test.com` | `password` | Rahim Ahmed (Dhaka). Has bookings & review history. |
+| **Customer 2** | `customer2@test.com` | `password` | Fahim Chowdhury (Chittagong). |
+| **Provider 1** | `provider@test.com` | `password` | Karim Electrician (Dhaka). Approved. Has earnings & wallet. |
+| **Provider 2** | `kamal@test.com` | `password` | Kamal AC Tech (Chittagong). Approved. |
+| **Provider 3** | `pending@test.com` | `password` | Pending Repairer (Dhaka). Needs admin approval. |
+
+---
+
+## 🧪 Running Automated Tests
+Run the integration test suite to verify all workflows:
+```bash
+php artisan test
+```
+*(All 31 assertions covering bookings, validation, payouts, reviews, and admin dashboard are verified green).*
