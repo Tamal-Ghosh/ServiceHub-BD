@@ -183,7 +183,7 @@
     </div>
 
     {{-- SECTION 3: PAST BOOKINGS --}}
-    <div class="space-y-4">
+    <div class="space-y-4" id="past-history">
         <h3 class="text-lg font-bold text-white flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
             Past History ({{ $pastBookings->count() }})
@@ -298,5 +298,16 @@
             form.classList.add('hidden');
         }
     }
+
+    // Auto scroll to past history section if completed tab parameter is passed
+    window.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('tab') === 'completed') {
+            const element = document.getElementById('past-history');
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    });
 </script>
 @endsection

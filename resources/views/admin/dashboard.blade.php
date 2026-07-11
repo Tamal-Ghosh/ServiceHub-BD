@@ -380,8 +380,25 @@
         
         // Set active button
         const activeBtn = document.getElementById(`btn-${tabId}`);
-        activeBtn.classList.remove('border-transparent', 'text-slate-400', 'hover:text-white');
-        activeBtn.classList.add('border-indigo-500', 'text-indigo-400');
+        if (activeBtn) {
+            activeBtn.classList.remove('border-transparent', 'text-slate-400', 'hover:text-white');
+            activeBtn.classList.add('border-indigo-500', 'text-indigo-400');
+        }
     }
+
+    // Auto switch tab based on URL param
+    window.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab');
+        if (tab === 'users') {
+            switchTab('tab-all-users');
+        } else if (tab === 'providers') {
+            switchTab('tab-pending-providers');
+        } else if (tab === 'bookings') {
+            switchTab('tab-all-bookings');
+        } else if (tab === 'withdrawals') {
+            switchTab('tab-pending-withdrawals');
+        }
+    });
 </script>
 @endsection
