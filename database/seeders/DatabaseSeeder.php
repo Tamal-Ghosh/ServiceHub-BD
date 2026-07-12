@@ -14,20 +14,29 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Disable foreign key checks for truncation
+        \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
+        \App\Models\Withdrawal::truncate();
+        \App\Models\Payment::truncate();
+        \App\Models\Review::truncate();
+        \App\Models\Booking::truncate();
+        \App\Models\Availability::truncate();
+        \App\Models\ProviderProfile::truncate();
+        \App\Models\User::truncate();
+        \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
+
         // 1. Seed skills
         $this->call(SkillSeeder::class);
 
         // 2. Create default admin
-        User::updateOrCreate(
-            ['email' => 'admin@servicehub.com'],
-            [
-                'name' => 'Admin User',
-                'password' => 'password',
-                'role' => 'admin',
-                'is_approved' => true,
-                'city' => 'Dhaka',
-            ]
-        );
+        User::create([
+            'email' => 'admin@servicehub.com',
+            'name' => 'Admin User',
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
+            'role' => 'admin',
+            'is_approved' => true,
+            'city' => 'Dhaka',
+        ]);
 
         // 3. Create Customers
         $customersData = [
@@ -228,9 +237,96 @@ class DatabaseSeeder extends Seeder
             $providers[$p['user']['email']] = $user;
         }
 
+        // 5. Generate 20 random customers
+        $customerNames = [
+            'Arif Rahman', 'Sajib Hasan', 'Tariqul Islam', 'Mizanur Rahman', 'Jamil Ahmed',
+            'Sumon Das', 'Biplob Sen', 'Rubel Mia', 'Farhad Reza', 'Hasib Khan',
+            'Nasir Uddin', 'Imran Hossain', 'Ziaul Haque', 'Rashedul Islam', 'Tanvir Ahmed',
+            'Mahbub Alam', 'Anisur Rahman', 'Shakil Khan', 'Belal Hossain', 'Saiful Islam',
+            'Sadia Afrin', 'Nusrat Jahan', 'Fariha Kabir', 'Laila Arjumand', 'Tania Sultana',
+            'Riya Moni', 'Mehnaz Parveen', 'Shahnaz Begum', 'Keya Akter', 'Mou Chowdhury'
+        ];
+        $cities = ['Dhaka', 'Chittagong', 'Rajshahi', 'Khulna', 'Sylhet', 'Barisal', 'Rangpur', 'Mymensingh', 'Comilla', 'Gazipur'];
 
+        for ($i = 0; $i < 20; $i++) {
+            $name = $customerNames[$i % count($customerNames)] . ' ' . ($i + 1);
+            $email = 'customer' . ($i + 4) . '@test.com';
+            User::create([
+                'name' => $name,
+                'email' => $email,
+                'password' => 'password',
+                'role' => 'customer',
+                'is_approved' => true,
+                'phone' => '017' . rand(10000000, 99999999),
+                'city' => $cities[array_rand($cities)],
+            ]);
+        }
 
-        // 6. Seed Bookings
+        // 6. Generate 30 random providers
+        $providerNames = [
+            'Hasan Chowdhury', 'Rafiqul Islam', 'Belal Ahmed', 'Nayan Sen', 'Kazi Shahed',
+            'Siddique Ali', 'Tariq Anam', 'Ruhul Amin', 'Zafar Iqbal', 'Matiur Rahman',
+            'Alimuddin Ahmed', 'Shamsur Rahman', 'Anwar Hossain', 'Monirul Islam', 'Riazul Karim',
+            'Rezaul Islam', 'Zahid Hasan', 'Samiul Haque', 'Khairul Bashar', 'Raju Ahmed',
+            'Rana Hamid', 'Mamunur Rashid', 'Ashraful Islam', 'Moinul Haque', 'Enamul Kabir',
+            'Ataur Rahman', 'Golam Mustafa', 'Fazle Rabbi', 'Humayun Kabir', 'Sajjad Hossain'
+        ];
+        $bios = [
+            'Experienced professional dedicated to quality workmanship and customer satisfaction.',
+            'Specialist in providing quick, reliable, and affordable services. Available for emergency requests.',
+            'Over 7 years of hands-on experience in residential and commercial projects.',
+            'Providing premium-quality services at very competitive rates. Certified and fully insured.',
+            'Professional and prompt service delivery. Friendly attitude and customer-first approach.'
+        ];
+        $areas = ['Mirpur', 'Dhanmondi', 'Uttara', 'Gulshan', 'Banani', 'Badda', 'Mohammadpur', 'Khilgaon', 'Motijheel', 'Wari', 'Agrabad', 'Chawkbazar', 'Zindabazar'];
+        $days = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+        $allSkills = Skill::all();
+
+        for ($i = 0; $i < 30; $i++) {
+            $name = $providerNames[$i % count($providerNames)] . ' (' . $allSkills[$i % $allSkills->count()]->name . ')';
+            $email = 'provider' . ($i + 2) . '@test.com';
+            $city = $cities[array_rand($cities)];
+            
+            $user = User::create([
+                'name' => $name,
+                'email' => $email,
+                'password' => 'password',
+                'role' => 'provider',
+                'is_approved' => (rand(1, 10) <= 8), // 80% approved, 20% pending
+                'phone' => '018' . rand(10000000, 99999999),
+                'city' => $city,
+            ]);
+
+            $user->providerProfile()->create([
+                'bio' => $bios[array_rand($bios)] . ' Specialized in ' . $allSkills[$i % $allSkills->count()]->name . '.',
+                'area' => $areas[array_rand($areas)],
+                'hourly_rate' => rand(150, 800),
+                'experience_years' => rand(1, 12),
+            ]);
+
+            // Assign 1 to 3 random skills
+            $skillsCount = rand(1, 3);
+            $randomSkills = $allSkills->random($skillsCount)->pluck('id')->toArray();
+            $user->skills()->sync($randomSkills);
+
+            // Assign 2 to 4 random availability slots
+            $slotsCount = rand(2, 4);
+            $randomDays = array_rand(array_flip($days), $slotsCount);
+            if (!is_array($randomDays)) {
+                $randomDays = [$randomDays];
+            }
+            foreach ($randomDays as $day) {
+                $user->availabilities()->create([
+                    'day_of_week' => $day,
+                    'start_time' => sprintf('%02d:00', rand(8, 12)),
+                    'end_time' => sprintf('%02d:00', rand(14, 20)),
+                    'is_available' => true,
+                ]);
+            }
+        }
+
+        // 7. Seed Bookings
         $bookingsData = [
             [
                 'customer_email' => 'customer@test.com',
