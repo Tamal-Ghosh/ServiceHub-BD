@@ -91,7 +91,7 @@
                     </div>
                     <div class="flex items-center justify-between">
                         <span class="text-sm text-slate-400">Jobs Done</span>
-                        <span class="text-white font-semibold">{{ $provider->review_count }}</span>
+                        <span class="text-white font-semibold">{{ $provider->providerBookings()->where('status', 'completed')->count() }}</span>
                     </div>
                     <div class="flex items-center justify-between">
                         <span class="text-sm text-slate-400">Member Since</span>
@@ -102,23 +102,32 @@
 
             {{-- Contact Info --}}
             <div class="backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6">
-                <h3 class="text-base font-semibold text-white mb-4">Contact</h3>
-                <div class="space-y-3">
-                    @if($provider->phone)
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                <h3 class="text-base font-semibold text-white mb-4">Contact Info</h3>
+                @auth
+                    <div class="space-y-3">
+                        @if($provider->phone)
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                                </div>
+                                <span class="text-sm text-slate-300">{{ $provider->phone }}</span>
                             </div>
-                            <span class="text-sm text-slate-300">{{ $provider->phone }}</span>
+                        @endif
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002-2v10a2 2 0 002 2z"/></svg>
+                            </div>
+                            <span class="text-sm text-slate-300">{{ $provider->email }}</span>
                         </div>
-                    @endif
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                            <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                        </div>
-                        <span class="text-sm text-slate-300">{{ $provider->email }}</span>
                     </div>
-                </div>
+                @else
+                    <div class="text-center py-2">
+                        <p class="text-xs text-slate-400 mb-3">Please sign in to view contact details.</p>
+                        <a href="{{ route('login') }}" class="inline-flex items-center justify-center w-full px-4 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 hover:text-indigo-300 text-xs font-semibold border border-indigo-500/20 transition-all">
+                            Sign In
+                        </a>
+                    </div>
+                @endauth
             </div>
 
             {{-- Availability --}}
