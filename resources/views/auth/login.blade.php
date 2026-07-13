@@ -82,13 +82,18 @@
                 @enderror
             </div>
 
-            {{-- Remember me --}}
+            {{-- Remember me & Forgot Password --}}
             <div class="flex items-center justify-between">
                 <label class="flex items-center gap-2 cursor-pointer group">
                     <input type="checkbox" name="remember" id="remember"
                         class="w-4 h-4 rounded border-white/20 bg-white/5 text-indigo-500 focus:ring-indigo-500/50 focus:ring-offset-0 transition-colors">
                     <span class="text-sm text-slate-400 group-hover:text-slate-300 transition-colors">Remember me</span>
                 </label>
+                @if (Route::has('password.request'))
+                    <a href="{{ route('password.request') }}" class="text-sm text-indigo-400 hover:text-indigo-300 transition-colors">
+                        Forgot password?
+                    </a>
+                @endif
             </div>
 
             {{-- Submit --}}

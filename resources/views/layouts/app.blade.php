@@ -165,6 +165,9 @@
             {{-- Page Content --}}
             <main class="p-6">
                 @yield('content')
+                @if (isset($slot))
+                    {{ $slot }}
+                @endif
             </main>
         </div>
 
