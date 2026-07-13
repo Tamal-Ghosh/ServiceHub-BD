@@ -7,9 +7,11 @@ use App\Http\Controllers\Customer\CustomerDashboardController;
 use App\Http\Controllers\Provider\ProviderDashboardController;
 use App\Http\Controllers\Provider\ProviderProfileController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\AiServiceController;
 
 // Landing page
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::post('/ai/suggest', [AiServiceController::class, 'suggest'])->name('ai.suggest');
 
 // Guest routes (register & login)
 Route::middleware('guest')->group(function () {

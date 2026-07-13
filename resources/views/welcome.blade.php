@@ -71,6 +71,56 @@
             Electricians, plumbers, AC technicians, appliance repairers, tutors, and more. Certified and reviewed professionals at your doorstep.
         </p>
 
+        {{-- AI Assistant Card --}}
+        <div class="max-w-4xl mx-auto mb-6 backdrop-blur-xl bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 p-5 rounded-3xl text-left shadow-2xl relative overflow-hidden animate-fade-up" style="animation-delay: 0.15s">
+            <div class="absolute right-0 top-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0">
+                        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
+                            AI Assistant
+                            <span class="px-1.5 py-0.5 rounded bg-indigo-500/20 text-[9px] text-indigo-300 font-semibold tracking-wider uppercase">Beta</span>
+                        </h4>
+                        <p class="text-xs text-slate-200 mt-0.5 font-medium">Describe your issue in plain words and let AI match you with the right helper category!</p>
+                    </div>
+                </div>
+                <button type="button" onclick="toggleAiAssistant()" class="shrink-0 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1">
+                    <span id="aiToggleText">Try AI Assistant</span>
+                    <svg id="aiToggleIcon" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+            </div>
+            
+            {{-- Collapsible AI Chatbot Body --}}
+            <div id="aiAssistantBody" class="mt-4 pt-4 border-t border-white/[0.06] hidden">
+                <div class="space-y-4">
+                    {{-- Chat Messages Area --}}
+                    <div id="aiChatHistory" class="max-h-[280px] overflow-y-auto space-y-3 p-4 rounded-2xl bg-slate-950/40 border border-white/5 scrollbar-thin flex flex-col">
+                        <div class="flex items-start gap-2.5">
+                            <div class="w-7 h-7 rounded-lg bg-indigo-500/10 flex items-center justify-center shrink-0">
+                                <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            </div>
+                            <div class="p-3 rounded-2xl rounded-tl-none bg-white/[0.04] border border-white/[0.06] text-xs text-slate-300 max-w-[85%] leading-relaxed">
+                                Hello! I am your ServiceHub AI Assistant. Feel free to chat with me normally or describe a home service issue you need help with!
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Chat Input Row --}}
+                    <div class="flex gap-2">
+                        <input type="text" id="aiProblemInput" placeholder="Ask anything or describe a service problem..." onkeydown="if(event.key === 'Enter') askGemini()"
+                            class="flex-1 px-4 py-3 rounded-xl bg-slate-950/50 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 transition-all">
+                        <button type="button" onclick="askGemini()" id="aiSendBtn" class="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/20 transition-all flex items-center gap-1.5 shrink-0">
+                            <span id="aiBtnText">Send</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {{-- Filter / Search Form --}}
         <div class="max-w-4xl mx-auto backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] p-6 rounded-3xl shadow-2xl shadow-black/30 animate-fade-up" style="animation-delay: 0.2s">
             <form method="GET" action="/" class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -78,25 +128,31 @@
                 {{-- Skill Filter --}}
                 <div class="relative">
                     <label for="skill" class="block text-left text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Service Skill</label>
-                    <input type="text" name="skill" id="skill" list="skills-list" value="{{ is_numeric(request('skill')) ? ($skills->find(request('skill'))->name ?? request('skill')) : request('skill') }}" placeholder="All Services" autocomplete="off"
-                        class="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
-                    <datalist id="skills-list">
+                    <select name="skill" id="skill" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-white/[0.1] text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 appearance-none transition-all" style="background-image: url(&quot;data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e&quot;); background-position: right 0.75rem center; background-repeat: no-repeat; background-size: 1.25em 1.25em; padding-right: 2.5rem;">
+                        <option value="" class="bg-slate-900 text-slate-400">All Services</option>
                         @foreach($skills as $sk)
-                            <option value="{{ $sk->name }}">
+                            @php
+                                $reqSkill = request('skill');
+                                $skillName = is_numeric($reqSkill) ? ($skills->find($reqSkill)->name ?? '') : $reqSkill;
+                            @endphp
+                            <option value="{{ $sk->name }}" class="bg-slate-900 text-white" {{ $skillName === $sk->name ? 'selected' : '' }}>
+                                {{ $sk->name }}
+                            </option>
                         @endforeach
-                    </datalist>
+                    </select>
                 </div>
 
                 {{-- City Filter --}}
                 <div class="relative">
                     <label for="city" class="block text-left text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">City</label>
-                    <input type="text" name="city" id="city" list="cities-list" value="{{ request('city') }}" placeholder="All Cities" autocomplete="off"
-                        class="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
-                    <datalist id="cities-list">
+                    <select name="city" id="city" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-white/[0.1] text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 appearance-none transition-all" style="background-image: url(&quot;data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e&quot;); background-position: right 0.75rem center; background-repeat: no-repeat; background-size: 1.25em 1.25em; padding-right: 2.5rem;">
+                        <option value="" class="bg-slate-900 text-slate-400">All Cities</option>
                         @foreach($cities as $ct)
-                            <option value="{{ $ct }}">
+                            <option value="{{ $ct }}" class="bg-slate-900 text-white" {{ request('city') === $ct ? 'selected' : '' }}>
+                                {{ $ct }}
+                            </option>
                         @endforeach
-                    </datalist>
+                    </select>
                 </div>
 
                 {{-- Rating Filter --}}
@@ -222,5 +278,168 @@
         <p>&copy; {{ date('Y') }} ServiceHub BD. All rights reserved.</p>
     </footer>
 
+    <script>
+        function toggleAiAssistant() {
+            const body = document.getElementById('aiAssistantBody');
+            const toggleText = document.getElementById('aiToggleText');
+            const toggleIcon = document.getElementById('aiToggleIcon');
+            
+            if (body.classList.contains('hidden')) {
+                body.classList.remove('hidden');
+                toggleText.textContent = 'Hide AI Assistant';
+                toggleIcon.classList.add('rotate-180');
+            } else {
+                body.classList.add('hidden');
+                toggleText.textContent = 'Try AI Assistant';
+                toggleIcon.classList.remove('rotate-180');
+            }
+        }
+
+        let suggestedSkill = '';
+
+        async function askGemini() {
+            const inputField = document.getElementById('aiProblemInput');
+            const problem = inputField.value.trim();
+            const btnText = document.getElementById('aiBtnText');
+            const chatHistory = document.getElementById('aiChatHistory');
+
+            if (problem.length < 2) return;
+
+            // Clear input field
+            inputField.value = '';
+
+            // Escape html to prevent XSS
+            const escapedProblem = escapeHtml(problem);
+
+            // Append User Message to Chat History
+            const userMsgHtml = `
+                <div class="flex items-start gap-2.5 justify-end mb-3">
+                    <div class="p-3 rounded-2xl rounded-tr-none bg-indigo-600/25 border border-indigo-500/20 text-xs text-white max-w-[85%] leading-relaxed text-left">
+                        ${escapedProblem}
+                    </div>
+                    <div class="w-7 h-7 rounded-lg bg-indigo-600/20 flex items-center justify-center shrink-0">
+                        <svg class="w-3.5 h-3.5 text-indigo-300" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                    </div>
+                </div>
+            `;
+            chatHistory.insertAdjacentHTML('beforeend', userMsgHtml);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            // Append Typing Indicator
+            const typingId = 'typing_' + Date.now();
+            const typingHtml = `
+                <div id="${typingId}" class="flex items-start gap-2.5 mb-3">
+                    <div class="w-7 h-7 rounded-lg bg-indigo-500/10 flex items-center justify-center shrink-0">
+                        <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <div class="p-3 rounded-2xl rounded-tl-none bg-white/[0.04] border border-white/[0.06] text-xs text-slate-400 max-w-[85%] italic">
+                        AI is typing...
+                    </div>
+                </div>
+            `;
+            chatHistory.insertAdjacentHTML('beforeend', typingHtml);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            btnText.textContent = '...';
+
+            try {
+                const response = await fetch('{{ route("ai.suggest") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ problem: problem })
+                });
+
+                let data;
+                try {
+                    data = await response.json();
+                } catch (jsonErr) {
+                    const rawText = await response.text();
+                    console.error("Failed to parse JSON response:", rawText);
+                    throw new Error("Server returned an invalid format: " + (rawText.substring(0, 150) || "Empty Response"));
+                }
+                
+                // Remove typing indicator
+                const typingElem = document.getElementById(typingId);
+                if (typingElem) typingElem.remove();
+
+                if (data.success) {
+                    suggestedSkill = data.suggested_service;
+                    const actionBtn = suggestedSkill ? `
+                        <div class="mt-2.5">
+                            <button type="button" onclick="applyAiSuggestion('${escapeQuotes(suggestedSkill)}')" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[10px] transition-all shadow-md shadow-indigo-600/20">
+                                Match with ${escapeHtml(suggestedSkill)}
+                            </button>
+                        </div>
+                    ` : '';
+
+                    const aiMsgHtml = `
+                        <div class="flex items-start gap-2.5 mb-3 animate-fade-up">
+                            <div class="w-7 h-7 rounded-lg bg-indigo-500/10 flex items-center justify-center shrink-0">
+                                <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            </div>
+                            <div class="p-3 rounded-2xl rounded-tl-none bg-white/[0.04] border border-white/[0.06] text-xs text-slate-300 max-w-[85%] leading-relaxed text-left">
+                                <p>${escapeHtml(data.explanation)}</p>
+                                ${actionBtn}
+                            </div>
+                        </div>
+                    `;
+                    chatHistory.insertAdjacentHTML('beforeend', aiMsgHtml);
+                } else {
+                    const errorMsgHtml = `
+                        <div class="flex items-start gap-2.5 mb-3 animate-fade-up">
+                            <div class="w-7 h-7 rounded-lg bg-indigo-500/10 flex items-center justify-center shrink-0">
+                                <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            </div>
+                            <div class="p-3 rounded-2xl rounded-tl-none bg-white/[0.04] border border-white/[0.06] text-xs text-slate-300 max-w-[85%] leading-relaxed text-left">
+                                ${escapeHtml(data.message || 'Could not understand, please try again.')}
+                            </div>
+                        </div>
+                    `;
+                    chatHistory.insertAdjacentHTML('beforeend', errorMsgHtml);
+                }
+            } catch (error) {
+                console.error(error);
+                const typingElem = document.getElementById(typingId);
+                if (typingElem) typingElem.remove();
+                
+                const errHtml = `
+                    <div class="flex items-start gap-2.5 mb-3 animate-fade-up">
+                        <div class="w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
+                            <svg class="w-3.5 h-3.5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        </div>
+                        <div class="p-3 rounded-2xl rounded-tl-none bg-white/[0.04] border border-white/[0.06] text-xs text-slate-300 max-w-[85%] leading-relaxed text-left">
+                            Connection error: ${escapeHtml(error.message || 'Please try again.')}
+                        </div>
+                    </div>
+                `;
+                chatHistory.insertAdjacentHTML('beforeend', errHtml);
+            } finally {
+                btnText.textContent = 'Send';
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }
+        }
+
+        function applyAiSuggestion(skill) {
+            if (!skill) return;
+            document.getElementById('skill').value = skill;
+            document.getElementById('skill').form.submit();
+        }
+
+        function escapeHtml(str) {
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function escapeQuotes(str) {
+            return str.replace(/'/g, "\\'");
+        }
+    </script>
 </body>
 </html>

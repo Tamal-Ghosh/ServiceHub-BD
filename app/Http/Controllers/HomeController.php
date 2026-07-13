@@ -45,7 +45,37 @@ class HomeController extends Controller
             }, '>=', $rating);
         }
 
+        // Save search history if skill is searched
+        if ($request->filled('skill')) {
+            session()->put('last_searched_skill', $request->skill);
+        }
+
         $providers = $query->latest()->get();
+
+        // Sort dynamically based on Location & Search History
+        if (auth()->check() || session()->has('last_searched_skill')) {
+            $userCity = auth()->check() ? auth()->user()->city : null;
+            $lastSkill = session()->get('last_searched_skill');
+
+            $providers = $providers->sort(function ($a, $b) use ($userCity, $lastSkill) {
+                $scoreA = 0;
+                $scoreB = 0;
+
+                // Score for matching city
+                if ($userCity) {
+                    if (strcasecmp($a->city, $userCity) === 0) $scoreA += 10;
+                    if (strcasecmp($b->city, $userCity) === 0) $scoreB += 10;
+                }
+
+                // Score for matching search history
+                if ($lastSkill) {
+                    if ($a->skills->contains('name', $lastSkill)) $scoreA += 5;
+                    if ($b->skills->contains('name', $lastSkill)) $scoreB += 5;
+                }
+
+                return $scoreB <=> $scoreA; // Descending order of relevancy scores
+            })->values();
+        }
 
         $skills = Skill::orderBy('name')->get();
         
