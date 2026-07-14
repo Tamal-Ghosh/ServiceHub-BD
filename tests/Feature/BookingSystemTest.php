@@ -69,11 +69,12 @@ class BookingSystemTest extends TestCase
 
     public function test_customer_can_create_booking_successfully(): void
     {
-        // Book on Monday 13 July 2026 (which is a Monday) from 10:00 for 2 hours
+        $monday = date('Y-m-d', strtotime('next Monday'));
+        // Book on Monday from 10:00 for 2 hours
         $response = $this->actingAs($this->customer)
             ->post(route('customer.bookings.store'), [
                 'provider_id' => $this->provider->id,
-                'booking_date' => '2026-07-13',
+                'booking_date' => $monday,
                 'start_time' => '10:00',
                 'duration' => 2,
                 'problem_description' => 'My fan is not working. Needs inspection.',
@@ -87,7 +88,7 @@ class BookingSystemTest extends TestCase
         $this->assertDatabaseHas('bookings', [
             'customer_id' => $this->customer->id,
             'provider_id' => $this->provider->id,
-            'booking_date' => '2026-07-13',
+            'booking_date' => $monday,
             'start_time' => '10:00',
             'duration' => 2,
             'total_price' => 600,
@@ -97,12 +98,13 @@ class BookingSystemTest extends TestCase
 
     public function test_booking_fails_if_outside_availability(): void
     {
-        // 2026-07-13 is a Monday, but try booking at 18:00 (ends at 19:00, outside 09:00-17:00)
+        $monday = date('Y-m-d', strtotime('next Monday'));
+        // Monday, but try booking at 18:00 (ends at 19:00, outside 09:00-17:00)
         $response = $this->actingAs($this->customer)
             ->from(route('customer.bookings.create', $this->provider->id))
             ->post(route('customer.bookings.store'), [
                 'provider_id' => $this->provider->id,
-                'booking_date' => '2026-07-13',
+                'booking_date' => $monday,
                 'start_time' => '18:00',
                 'duration' => 1,
                 'problem_description' => 'Fix short circuit problem.',
@@ -114,12 +116,13 @@ class BookingSystemTest extends TestCase
 
     public function test_booking_fails_on_unsupported_weekday(): void
     {
-        // 2026-07-14 is a Tuesday, provider has no availability on Tuesdays
+        $tuesday = date('Y-m-d', strtotime('next Tuesday'));
+        // Provider has no availability on Tuesdays
         $response = $this->actingAs($this->customer)
             ->from(route('customer.bookings.create', $this->provider->id))
             ->post(route('customer.bookings.store'), [
                 'provider_id' => $this->provider->id,
-                'booking_date' => '2026-07-14',
+                'booking_date' => $tuesday,
                 'start_time' => '10:00',
                 'duration' => 1,
                 'problem_description' => 'Fix light wiring issues.',
@@ -131,11 +134,12 @@ class BookingSystemTest extends TestCase
 
     public function test_booking_fails_if_double_booked(): void
     {
+        $monday = date('Y-m-d', strtotime('next Monday'));
         // Create an existing booking
         Booking::create([
             'customer_id' => $this->customer->id,
             'provider_id' => $this->provider->id,
-            'booking_date' => '2026-07-13',
+            'booking_date' => $monday,
             'start_time' => '10:00',
             'duration' => 2, // 10:00 to 12:00
             'problem_description' => 'First issue details.',
@@ -148,7 +152,7 @@ class BookingSystemTest extends TestCase
             ->from(route('customer.bookings.create', $this->provider->id))
             ->post(route('customer.bookings.store'), [
                 'provider_id' => $this->provider->id,
-                'booking_date' => '2026-07-13',
+                'booking_date' => $monday,
                 'start_time' => '11:00',
                 'duration' => 1,
                 'problem_description' => 'Second issue details.',
@@ -160,10 +164,11 @@ class BookingSystemTest extends TestCase
 
     public function test_provider_can_accept_booking(): void
     {
+        $monday = date('Y-m-d', strtotime('next Monday'));
         $booking = Booking::create([
             'customer_id' => $this->customer->id,
             'provider_id' => $this->provider->id,
-            'booking_date' => '2026-07-13',
+            'booking_date' => $monday,
             'start_time' => '10:00',
             'duration' => 2,
             'problem_description' => 'AC servicing required.',
@@ -182,10 +187,11 @@ class BookingSystemTest extends TestCase
 
     public function test_provider_can_reject_booking(): void
     {
+        $monday = date('Y-m-d', strtotime('next Monday'));
         $booking = Booking::create([
             'customer_id' => $this->customer->id,
             'provider_id' => $this->provider->id,
-            'booking_date' => '2026-07-13',
+            'booking_date' => $monday,
             'start_time' => '10:00',
             'duration' => 2,
             'problem_description' => 'AC servicing required.',
@@ -204,10 +210,11 @@ class BookingSystemTest extends TestCase
 
     public function test_provider_can_transition_to_in_progress_and_completed(): void
     {
+        $monday = date('Y-m-d', strtotime('next Monday'));
         $booking = Booking::create([
             'customer_id' => $this->customer->id,
             'provider_id' => $this->provider->id,
-            'booking_date' => '2026-07-13',
+            'booking_date' => $monday,
             'start_time' => '10:00',
             'duration' => 2,
             'problem_description' => 'Fix socket switches.',
@@ -236,10 +243,11 @@ class BookingSystemTest extends TestCase
 
     public function test_customer_can_cancel_booking_with_reason(): void
     {
+        $monday = date('Y-m-d', strtotime('next Monday'));
         $booking = Booking::create([
             'customer_id' => $this->customer->id,
             'provider_id' => $this->provider->id,
-            'booking_date' => '2026-07-13',
+            'booking_date' => $monday,
             'start_time' => '10:00',
             'duration' => 2,
             'problem_description' => 'Generator repair request.',

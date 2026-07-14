@@ -9,6 +9,7 @@ use App\Models\Skill;
 use App\Models\Withdrawal;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Illuminate\Support\Facades\Http;
 
 class PaymentSystemTest extends TestCase
 {
@@ -81,39 +82,6 @@ class PaymentSystemTest extends TestCase
         $this->assertEquals(800.00, $booking->total_price);
 
         $response->assertRedirect(route('payment.show', $booking->id));
-    }
-
-    /** @test */
-    public function customer_can_pay_via_b_kash_successfully()
-    {
-        $booking = Booking::create([
-            'customer_id' => $this->customer->id,
-            'provider_id' => $this->provider->id,
-            'booking_date' => date('Y-m-d', strtotime('next Tuesday')),
-            'start_time' => '10:00:00',
-            'duration' => 2,
-            'problem_description' => 'Fan repair',
-            'total_price' => 800.00,
-            'status' => 'pending_payment',
-        ]);
-
-        $response = $this->actingAs($this->customer)->post(route('payment.process', $booking->id), [
-            'wallet_number' => '01712345678',
-            'pin' => '1234',
-        ]);
-
-        $response->assertRedirect(route('customer.bookings.index'));
-        
-        $booking->refresh();
-        $this->assertEquals('pending', $booking->status);
-
-        $payment = Payment::where('booking_id', $booking->id)->first();
-        $this->assertNotNull($payment);
-        $this->assertEquals(800.00, $payment->amount);
-        $this->assertEquals(120.00, $payment->platform_charge); // 15%
-        $this->assertEquals(680.00, $payment->provider_earning); // 85%
-        $this->assertEquals('completed', $payment->status);
-        $this->assertStringStartsWith('TRX', $payment->transaction_id);
     }
 
     /** @test */
@@ -262,5 +230,65 @@ class PaymentSystemTest extends TestCase
         $this->provider->refresh();
         $this->assertEquals(500.00, $this->provider->provider_total_withdrawn);
         $this->assertEquals(0.00, $this->provider->provider_pending_withdrawal);
+    }
+
+    /** @test */
+    public function customer_can_initiate_sslcommerz_payment()
+    {
+        Http::fake([
+            'sandbox.sslcommerz.com/*' => Http::response([
+                'status' => 'SUCCESS',
+                'GatewayPageURL' => 'https://sandbox.sslcommerz.com/gwprocess/v4/pay.php?id=123',
+            ], 200)
+        ]);
+
+        $booking = Booking::create([
+            'customer_id' => $this->customer->id,
+            'provider_id' => $this->provider->id,
+            'booking_date' => date('Y-m-d', strtotime('next Tuesday')),
+            'start_time' => '10:00:00',
+            'duration' => 2,
+            'problem_description' => 'Fan repair',
+            'total_price' => 800.00,
+            'status' => 'pending_payment',
+        ]);
+
+        $response = $this->actingAs($this->customer)->post(route('payment.sslcommerz.initiate', $booking->id));
+        
+        $response->assertRedirect();
+        $this->assertStringContainsString('sandbox.sslcommerz.com/gwprocess/v4/pay.php', $response->headers->get('Location'));
+    }
+
+    /** @test */
+    public function customer_payment_is_completed_on_sslcommerz_success()
+    {
+        $booking = Booking::create([
+            'customer_id' => $this->customer->id,
+            'provider_id' => $this->provider->id,
+            'booking_date' => date('Y-m-d', strtotime('next Tuesday')),
+            'start_time' => '10:00:00',
+            'duration' => 2,
+            'problem_description' => 'Fan repair',
+            'total_price' => 800.00,
+            'status' => 'pending_payment',
+        ]);
+
+        $tranId = 'SSLC_' . $booking->id . '_1234567890';
+
+        $response = $this->post(route('payment.sslcommerz.success'), [
+            'status' => 'VALID',
+            'tran_id' => $tranId,
+            'amount' => 800.00,
+        ]);
+
+        $response->assertRedirect(route('customer.bookings.index'));
+        
+        $booking->refresh();
+        $this->assertEquals('pending', $booking->status);
+
+        $payment = Payment::where('booking_id', $booking->id)->first();
+        $this->assertNotNull($payment);
+        $this->assertEquals('completed', $payment->status);
+        $this->assertEquals($tranId, $payment->transaction_id);
     }
 }
