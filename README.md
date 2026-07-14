@@ -50,6 +50,11 @@ Featuring a modern dark-mode glassmorphism user interface, the application deliv
 * Secure registration, login, email verification, and password reset flows powered by Laravel Breeze.
 * Prevent Back History middleware: custom HTTP cache-control filters applied to all authenticated routes to block access to sensitive dashboards via browser back navigation after logout.
 
+### 9. AI-Powered Service Assistant
+* Smart chatbot assistant on the landing page powered by the Groq API (using the high-performance `llama-3.3-70b-versatile` model).
+* Real-time conversational analysis of household/repair problems supporting English and Bengali queries.
+* Automated extraction and classification of required service categories (e.g. matching descriptions to "Electrician").
+
 ---
 
 ## 🛠️ Technology Stack
@@ -74,11 +79,13 @@ Featuring a modern dark-mode glassmorphism user interface, the application deliv
    ```
 
 3. **Configure Environment**:
-   Duplicate `.env.example` as `.env`, configure your database, add your SSLCommerz sandbox keys, and run:
+   Duplicate `.env.example` as `.env`, configure your database, add your SSLCommerz sandbox keys and Groq API key:
    ```env
    SSLCOMMERZ_STORE_ID=testbox
    SSLCOMMERZ_STORE_PASSWORD=qwerty
    SSLCOMMERZ_IS_SANDBOX=true
+
+   GROQ_API_KEY=your_groq_api_key_here
    ```
    Then generate the application key:
    ```bash
