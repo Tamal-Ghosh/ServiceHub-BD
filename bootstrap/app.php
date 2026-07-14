@@ -13,6 +13,13 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'no-cache' => \App\Http\Middleware\PreventBackHistory::class,
+        ]);
+
+        $middleware->validateCsrfTokens(except: [
+            '/payment/sslcommerz/success',
+            '/payment/sslcommerz/fail',
+            '/payment/sslcommerz/cancel',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

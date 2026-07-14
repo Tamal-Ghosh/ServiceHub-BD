@@ -2,33 +2,22 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Customer\CustomerDashboardController;
 use App\Http\Controllers\Provider\ProviderDashboardController;
 use App\Http\Controllers\Provider\ProviderProfileController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\AiServiceController;
+use App\Http\Controllers\ProfileController;
 
 // Landing page
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::post('/ai/suggest', [AiServiceController::class, 'suggest'])->name('ai.suggest');
 
-// Guest routes (register & login)
-Route::middleware('guest')->group(function () {
-    Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
-});
-
-// Logout
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
-
 // Public provider profile
 Route::get('/provider/{id}/profile', [ProviderProfileController::class, 'show'])->name('provider.profile.show');
 
 // Customer routes
-Route::middleware(['auth', 'role:customer'])->prefix('customer')->name('customer.')->group(function () {
+Route::middleware(['auth', 'role:customer', 'no-cache'])->prefix('customer')->name('customer.')->group(function () {
     Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('dashboard');
     
     // Bookings
@@ -44,13 +33,13 @@ Route::middleware(['auth', 'role:customer'])->prefix('customer')->name('customer
 });
 
 // Payment checkout routes (outside prefix to preserve standard names)
-Route::middleware(['auth', 'role:customer'])->group(function () {
+Route::middleware(['auth', 'role:customer', 'no-cache'])->group(function () {
     Route::get('/bookings/{booking}/payment', [\App\Http\Controllers\PaymentController::class, 'show'])->name('payment.show');
-    Route::post('/bookings/{booking}/payment/process', [\App\Http\Controllers\PaymentController::class, 'process'])->name('payment.process');
+    Route::post('/bookings/{booking}/payment/sslcommerz/initiate', [\App\Http\Controllers\PaymentController::class, 'sslcommerzInitiate'])->name('payment.sslcommerz.initiate');
 });
 
 // Provider routes
-Route::middleware(['auth', 'role:provider'])->prefix('provider')->name('provider.')->group(function () {
+Route::middleware(['auth', 'role:provider', 'no-cache'])->prefix('provider')->name('provider.')->group(function () {
     Route::get('/dashboard', [ProviderDashboardController::class, 'index'])->name('dashboard');
     Route::get('/pending', function () {
         return view('provider.pending');
@@ -76,7 +65,7 @@ Route::middleware(['auth', 'role:provider'])->prefix('provider')->name('provider
 });
 
 // Admin routes
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin', 'no-cache'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::post('/providers/{user}/approve', [AdminDashboardController::class, 'approve'])->name('providers.approve');
     
@@ -87,3 +76,16 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/profile', [\App\Http\Controllers\UserProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [\App\Http\Controllers\UserProfileController::class, 'update'])->name('profile.update');
 });
+
+Route::middleware(['auth', 'no-cache'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
+
+// SSLCommerz postback callback routes (exempt from CSRF and auth)
+Route::post('/payment/sslcommerz/success', [\App\Http\Controllers\PaymentController::class, 'sslcommerzSuccess'])->name('payment.sslcommerz.success');
+Route::post('/payment/sslcommerz/fail', [\App\Http\Controllers\PaymentController::class, 'sslcommerzFail'])->name('payment.sslcommerz.fail');
+Route::post('/payment/sslcommerz/cancel', [\App\Http\Controllers\PaymentController::class, 'sslcommerzCancel'])->name('payment.sslcommerz.cancel');
