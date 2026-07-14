@@ -25,10 +25,10 @@ Featuring a modern dark-mode glassmorphism user interface, the application deliv
 * Cancellation flow with user-provided cancellation reasons.
 * Automatic price calculator (hourly rate × duration).
 
-### 4. Mock bKash Payment Integration
-* Authentic pink checkout gateway interface validating 11-digit wallet numbers and 4-digit PIN codes.
-* 15% platform fee escrow deduction; 85% provider payout ledger credit.
-* Unique transaction ID generator (`TRX...`) to track checkouts.
+### 4. SSLCommerz Payment Gateway Integration
+* Secure checkout redirection to the official SSLCommerz sandbox gateway.
+* Supports Cards (Visa, MasterCard, AMEX, Nexus), Mobile Banking (bKash, Nagad, Rocket, Upay), and Net Banking.
+* Auto-calculates platform fees (15% platform deduction, 85% provider payout) and generates unique transaction tracking codes (`SSLC_...`).
 
 ### 5. Provider Wallet & Withdrawal Center
 * Real-time wallet tracking: Total Earnings, Withdrawable Balance, Pending Payouts, and Total Withdrawn.
@@ -45,6 +45,10 @@ Featuring a modern dark-mode glassmorphism user interface, the application deliv
 * Glassmorphism statistics summary cards.
 * Tabbed control tabs to approve/reject pending providers and withdrawal requests.
 * Database registry of All Bookings (trans ID details) and All Users (customer, provider, admin).
+
+### 8. Breeze Authentication & Security
+* Secure registration, login, email verification, and password reset flows powered by Laravel Breeze.
+* Prevent Back History middleware: custom HTTP cache-control filters applied to all authenticated routes to block access to sensitive dashboards via browser back navigation after logout.
 
 ---
 
@@ -70,7 +74,13 @@ Featuring a modern dark-mode glassmorphism user interface, the application deliv
    ```
 
 3. **Configure Environment**:
-   Duplicate `.env.example` as `.env`, configure your database, and run:
+   Duplicate `.env.example` as `.env`, configure your database, add your SSLCommerz sandbox keys, and run:
+   ```env
+   SSLCOMMERZ_STORE_ID=testbox
+   SSLCOMMERZ_STORE_PASSWORD=qwerty
+   SSLCOMMERZ_IS_SANDBOX=true
+   ```
+   Then generate the application key:
    ```bash
    php artisan key:generate
    ```
@@ -108,4 +118,4 @@ Run the integration test suite to verify all workflows:
 ```bash
 php artisan test
 ```
-*(All 31 assertions covering bookings, validation, payouts, reviews, and admin dashboard are verified green).*
+*(All 61 feature tests covering auth, profiles, bookings, SSLCommerz gateway integration, withdrawals, reviews, and admin features are verified green).*
