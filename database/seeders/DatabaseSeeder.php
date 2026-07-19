@@ -90,7 +90,7 @@ class DatabaseSeeder extends Seeder
             [
                 'user' => [
                     'email' => 'provider@test.com',
-                    'name' => 'Karim Electrician',
+                    'name' => 'Babul Electrician',
                     'password' => 'password',
                     'role' => 'provider',
                     'is_approved' => true,
@@ -266,7 +266,7 @@ class DatabaseSeeder extends Seeder
         $providerNames = [
             'Hasan Chowdhury', 'Rafiqul Islam', 'Belal Ahmed', 'Nayan Sen', 'Kazi Shahed',
             'Siddique Ali', 'Tariq Anam', 'Ruhul Amin', 'Zafar Iqbal', 'Matiur Rahman',
-            'Alimuddin Ahmed', 'Shamsur Rahman', 'Anwar Hossain', 'Monirul Islam', 'Riazul Karim',
+            'Alimuddin Ahmed', 'Shamsur Rahman', 'Anwar Hossain', 'Monirul Islam', 'Riazul Hasan',
             'Rezaul Islam', 'Zahid Hasan', 'Samiul Haque', 'Khairul Bashar', 'Raju Ahmed',
             'Rana Hamid', 'Mamunur Rashid', 'Ashraful Islam', 'Moinul Haque', 'Enamul Kabir',
             'Ataur Rahman', 'Golam Mustafa', 'Fazle Rabbi', 'Humayun Kabir', 'Sajjad Hossain'
@@ -330,7 +330,7 @@ class DatabaseSeeder extends Seeder
         $bookingsData = [
             [
                 'customer_email' => 'customer@test.com',
-                'provider_email' => 'provider@test.com', // Karim Electrician
+                'provider_email' => 'provider@test.com', // Babul Electrician
                 'booking_date' => date('Y-m-d', strtotime('next Monday')),
                 'start_time' => '10:00:00',
                 'duration' => 2,
@@ -350,7 +350,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'customer_email' => 'customer2@test.com',
-                'provider_email' => 'provider@test.com', // Karim Electrician
+                'provider_email' => 'provider@test.com', // Babul Electrician
                 'booking_date' => date('Y-m-d', strtotime('last Monday')),
                 'start_time' => '09:30:00',
                 'duration' => 2,
@@ -420,11 +420,11 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // Seed Payouts/Withdrawals for Karim Electrician
-        $karim = User::where('email', 'provider@test.com')->first();
-        if ($karim) {
+        // Seed Payouts/Withdrawals for Babul Electrician
+        $babul = User::where('email', 'provider@test.com')->first();
+        if ($babul) {
             \App\Models\Withdrawal::create([
-                'provider_id' => $karim->id,
+                'provider_id' => $babul->id,
                 'amount' => 150.00,
                 'payment_method' => 'bKash',
                 'account_number' => '01812345678',
@@ -432,7 +432,7 @@ class DatabaseSeeder extends Seeder
             ]);
 
             \App\Models\Withdrawal::create([
-                'provider_id' => $karim->id,
+                'provider_id' => $babul->id,
                 'amount' => 100.00,
                 'payment_method' => 'Nagad',
                 'account_number' => '01812345678',

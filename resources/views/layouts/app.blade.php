@@ -9,6 +9,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script>
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.add('light');
+        } else {
+            document.documentElement.classList.remove('light');
+        }
+    </script>
 </head>
 <body class="min-h-screen bg-slate-950 font-sans antialiased text-white">
 
@@ -143,6 +150,16 @@
                         <h1 class="text-xl font-semibold text-white">@yield('title', 'Dashboard')</h1>
                     </div>
                     <div class="flex items-center gap-3">
+                        {{-- Theme Toggle --}}
+                        <button onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-white/[0.06] border border-white/[0.1] hover:bg-white/[0.1] text-slate-300 hover:text-white flex items-center justify-center transition-all" title="Toggle Theme">
+                            <svg class="sunIcon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M14 12a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            <svg class="moonIcon w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                            </svg>
+                        </button>
+
                         @auth
                         {{-- Top bar user greeting --}}
                         <span class="text-sm text-slate-400 hidden sm:block">Welcome, <span class="text-white font-medium">{{ auth()->user()->name }}</span></span>

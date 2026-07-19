@@ -22,7 +22,7 @@ class ReviewSeeder extends Seeder
         $customer3 = $customers->skip(2)->first() ?? $customer1;
 
         $reviewData = [
-            // Karim Electrician (provider@test.com)
+            // Babul Electrician (provider@test.com)
             'provider@test.com' => [
                 [
                     'customer' => $customer1,

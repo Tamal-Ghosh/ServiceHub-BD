@@ -1,3 +1,187 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Premium Light Theme Style Overrides */
+html.light body {
+    background-color: #f8fafc !important; /* bg-slate-50 */
+    color: #0f172a !important; /* text-slate-900 */
+}
+
+/* Hide all dark background decoration divs and show light gradient */
+html.light .fixed.inset-0.-z-10 {
+    background-color: #f8fafc !important;
+    background-image: linear-gradient(to bottom right, #f8fafc, #edf2f7) !important;
+}
+
+html.light .fixed.inset-0.-z-10 div {
+    display: none !important;
+}
+
+/* Background class resets */
+html.light .bg-slate-950 {
+    background-color: #f8fafc !important;
+}
+
+html.light .bg-slate-900 {
+    background-color: #ffffff !important;
+}
+
+/* Text color resets */
+html.light .text-white {
+    color: #0f172a !important;
+}
+
+html.light .text-slate-400 {
+    color: #475569 !important;
+}
+
+html.light .text-slate-300 {
+    color: #334155 !important;
+}
+
+html.light .text-slate-200 {
+    color: #1e293b !important;
+}
+
+html.light .text-slate-500 {
+    color: #64748b !important;
+}
+
+html.light .text-indigo-300 {
+    color: #4f46e5 !important;
+}
+
+html.light .text-indigo-400 {
+    color: #4f46e5 !important;
+}
+
+/* Border overrides */
+html.light .border-white\/\[0\.06\],
+html.light .border-white\/10,
+html.light .border-white\/5 {
+    border-color: #e2e8f0 !important; /* border-slate-200 */
+}
+
+html.light .border-t {
+    border-color: #e2e8f0 !important;
+}
+
+html.light .border-b {
+    border-color: #e2e8f0 !important;
+}
+
+/* Backdrop blur & transparency container resets */
+html.light .backdrop-blur-xl {
+    background-color: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(20px) !important;
+}
+
+html.light .bg-slate-950\/80 {
+    background-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+html.light .bg-slate-950\/50,
+html.light .bg-slate-950\/40 {
+    background-color: #f1f5f9 !important; /* bg-slate-100 */
+}
+
+html.light .bg-white\/\[0\.03\],
+html.light .bg-white\/\[0\.04\],
+html.light .bg-white\/\[0\.02\] {
+    background-color: #ffffff !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+}
+
+/* Header style override */
+html.light header {
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+/* Form inputs & dropdowns */
+html.light input,
+html.light select,
+html.light textarea {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+}
+
+html.light select option {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+}
+
+html.light input::placeholder,
+html.light textarea::placeholder {
+    color: #94a3b8 !important;
+}
+
+/* Chat History specifics */
+html.light #aiChatHistory {
+    background-color: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+html.light #aiProblemInput {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+}
+
+html.light #aiProblemInput::placeholder {
+    color: #94a3b8 !important;
+}
+
+html.light .bg-indigo-600\/25 {
+    background-color: rgba(79, 70, 229, 0.1) !important;
+    color: #4f46e5 !important;
+}
+
+html.light .bg-indigo-600\/20 {
+    background-color: rgba(79, 70, 229, 0.15) !important;
+}
+
+/* Service provider badge and state style overrides */
+html.light .bg-slate-800 {
+    background-color: #f1f5f9 !important; /* bg-slate-100 */
+}
+
+html.light .text-slate-600 {
+    color: #475569 !important;
+}
+
+html.light .bg-indigo-500\/10 {
+    background-color: rgba(79, 70, 229, 0.08) !important;
+    color: #4f46e5 !important;
+}
+
+html.light .border-indigo-500\/20 {
+    border-color: rgba(79, 70, 229, 0.2) !important;
+}
+
+/* Logo and brand header colors */
+html.light .from-white.to-indigo-200 {
+    background-image: linear-gradient(to right, #4f46e5, #7c3aed) !important; /* Indigo-to-purple logo in light theme */
+}
+
+/* Sidebar & Navigation buttons for register/login states */
+html.light .bg-white\/\[0\.06\] {
+    background-color: #f1f5f9 !important;
+    color: #475569 !important;
+}
+
+html.light .bg-white\/\[0\.06\]:hover {
+    background-color: #e2e8f0 !important;
+    color: #0f172a !important;
+}
+
+/* Card gradients backgrounds overrides */
+html.light .from-indigo-500\/10 {
+    --tw-gradient-from: rgba(79, 70, 229, 0.05) !important;
+}
+
+html.light .to-purple-500\/10 {
+    --tw-gradient-to: rgba(168, 85, 247, 0.05) !important;
+}
