@@ -73,4 +73,66 @@ class AdminDashboardController extends Controller
         return redirect()->route('admin.dashboard')
             ->with('success', "Withdrawal request of ৳" . number_format($withdrawal->amount) . " has been successfully {$statusLabel}!");
     }
+
+    /**
+     * Show edit form for a user.
+     */
+    public function editUser(User $user)
+    {
+        $skills = \App\Models\Skill::orderBy('name')->get();
+        return view('admin.users.edit', compact('user', 'skills'));
+    }
+
+    /**
+     * Update user information.
+     */
+    public function updateUser(Request $request, User $user)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'phone' => 'nullable|string|max:20',
+            'city' => 'nullable|string|max:100',
+            'role' => 'required|in:customer,provider,admin',
+            'is_approved' => 'required|boolean',
+            'skills' => 'required_if:role,provider|array',
+            'skills.*' => 'exists:skills,id',
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'city' => $request->city,
+            'role' => $request->role,
+            'is_approved' => ($request->role === 'customer' || $request->role === 'admin') ? true : $request->is_approved,
+        ]);
+
+        if ($user->role === 'provider') {
+            if (!$user->providerProfile) {
+                $user->providerProfile()->create();
+            }
+            if ($request->has('skills')) {
+                $user->skills()->sync($request->skills);
+            } else {
+                $user->skills()->detach();
+            }
+        }
+
+        return redirect()->route('admin.dashboard', ['tab' => 'users'])->with('success', "User {$user->name} has been updated successfully!");
+    }
+
+    /**
+     * Delete a user.
+     */
+    public function deleteUser(User $user)
+    {
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'You cannot delete your own admin account.');
+        }
+
+        $user->delete();
+
+        return redirect()->route('admin.dashboard', ['tab' => 'users'])->with('success', "User has been deleted successfully!");
+    }
 }

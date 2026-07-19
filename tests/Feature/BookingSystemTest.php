@@ -24,8 +24,8 @@ class BookingSystemTest extends TestCase
 
         // Create provider
         $this->provider = User::create([
-            'name' => 'Karim Electrician',
-            'email' => 'karim@test.com',
+            'name' => 'Babul Electrician',
+            'email' => 'babul@test.com',
             'role' => 'provider',
             'is_approved' => true,
             'city' => 'Dhaka',
@@ -63,7 +63,7 @@ class BookingSystemTest extends TestCase
             ->get(route('customer.bookings.create', $this->provider->id));
 
         $response->assertStatus(200);
-        $response->assertSee('Book Karim Electrician');
+        $response->assertSee('Book Babul Electrician');
         $response->assertSee('Rate: ৳300/hr');
     }
 

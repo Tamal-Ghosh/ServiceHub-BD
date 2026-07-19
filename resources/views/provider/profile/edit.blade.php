@@ -31,34 +31,13 @@
         </div>
     @endif
 
-    {{-- Profile Completion Progress --}}
-    @php
-        $steps = 0;
-        $total = 4;
-        if($profile->bio) $steps++;
-        if($profile->hourly_rate > 0) $steps++;
-        if(count($userSkillIds) > 0) $steps++;
-        if($profile->profile_photo) $steps++;
-        $percent = ($steps / $total) * 100;
-    @endphp
-    <div class="backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-2xl p-5 animate-fade-up">
-        <div class="flex items-center justify-between mb-3">
-            <span class="text-sm font-medium text-slate-300">Profile Completion</span>
-            <span class="text-sm font-bold {{ $percent == 100 ? 'text-emerald-400' : 'text-indigo-400' }}">{{ (int)$percent }}%</span>
-        </div>
-        <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-            <div class="h-full rounded-full transition-all duration-500 {{ $percent == 100 ? 'bg-gradient-to-r from-emerald-500 to-emerald-400' : 'bg-gradient-to-r from-indigo-500 to-purple-500' }}" style="width: {{ $percent }}%"></div>
-        </div>
-        <p class="text-xs text-slate-500 mt-2">{{ $steps }}/{{ $total }} steps completed</p>
-    </div>
-
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
         {{-- LEFT: Photo Upload --}}
         <div class="lg:col-span-1 space-y-6">
 
             {{-- Profile Photo Card --}}
-            <div class="backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6 text-center">
+            <div class="backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6 text-center animate-fade-up">
                 <h3 class="text-base font-semibold text-white mb-4">Profile Photo</h3>
 
                 {{-- Photo Preview --}}
@@ -96,7 +75,7 @@
             </div>
 
             {{-- Quick Info --}}
-            <div class="backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6">
+            <div class="backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6 animate-fade-up">
                 <h3 class="text-base font-semibold text-white mb-4">Account Info</h3>
                 <div class="space-y-3 text-sm">
                     <div class="flex justify-between items-center">
@@ -121,19 +100,29 @@
         <div class="lg:col-span-2 space-y-6">
 
             {{-- Profile Details Form --}}
-            <form method="POST" action="{{ route('provider.profile.update') }}">
+            <form method="POST" action="{{ route('provider.profile.update') }}" id="detailsForm">
                 @csrf
                 @method('PUT')
 
                 <div class="backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6 space-y-5">
-                    <h3 class="text-base font-semibold text-white">Profile Details</h3>
+                    <div class="flex items-center justify-between border-b border-white/[0.06] pb-4">
+                        <div>
+                            <h3 class="text-base font-semibold text-white">Profile Details</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Your personal and professional details</p>
+                        </div>
+                        <button type="button" id="editDetailsBtn" onclick="toggleDetailsEdit()"
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500/20 text-xs font-semibold transition-all">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                            <span id="editDetailsText">Edit Profile</span>
+                        </button>
+                    </div>
 
                     {{-- Name & Email --}}
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label for="name" class="block text-sm font-medium text-slate-300 mb-1.5">Full Name</label>
-                            <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required
-                                class="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300"
+                            <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required disabled
+                                class="details-field w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
                                 placeholder="Your full name">
                             @error('name')
                                 <p class="mt-1.5 text-sm text-rose-400">{{ $message }}</p>
@@ -141,8 +130,8 @@
                         </div>
                         <div>
                             <label for="email" class="block text-sm font-medium text-slate-300 mb-1.5">Email Address</label>
-                            <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" required
-                                class="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300"
+                            <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" required disabled
+                                class="details-field w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
                                 placeholder="you@example.com">
                             @error('email')
                                 <p class="mt-1.5 text-sm text-rose-400">{{ $message }}</p>
@@ -153,8 +142,8 @@
                     {{-- Bio --}}
                     <div>
                         <label for="bio" class="block text-sm font-medium text-slate-300 mb-1.5">Bio / About You</label>
-                        <textarea name="bio" id="bio" rows="4"
-                            class="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300 resize-none"
+                        <textarea name="bio" id="bio" rows="4" disabled
+                            class="details-field w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300 resize-none disabled:opacity-60 disabled:cursor-not-allowed"
                             placeholder="Tell customers about yourself, your experience, and what services you offer...">{{ old('bio', $profile->bio) }}</textarea>
                         @error('bio')
                             <p class="mt-1.5 text-sm text-rose-400">{{ $message }}</p>
@@ -165,8 +154,8 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label for="city" class="block text-sm font-medium text-slate-300 mb-1.5">City</label>
-                            <select name="city" id="city"
-                                class="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300 appearance-none"
+                            <select name="city" id="city" disabled
+                                class="details-field w-full px-4 py-3 rounded-xl bg-slate-900 border border-white/[0.1] text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300 appearance-none disabled:opacity-60 disabled:cursor-not-allowed"
                                 style="background-image: url(&quot;data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e&quot;); background-position: right 0.75rem center; background-repeat: no-repeat; background-size: 1.25em 1.25em;">
                                 <option value="" class="bg-slate-900">Select city</option>
                                 @foreach(['Dhaka', 'Chittagong', 'Rajshahi', 'Khulna', 'Sylhet', 'Barisal', 'Rangpur', 'Mymensingh', 'Comilla', 'Gazipur'] as $city)
@@ -176,8 +165,8 @@
                         </div>
                         <div>
                             <label for="area" class="block text-sm font-medium text-slate-300 mb-1.5">Area / Locality</label>
-                            <input type="text" name="area" id="area" value="{{ old('area', $profile->area) }}"
-                                class="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300"
+                            <input type="text" name="area" id="area" value="{{ old('area', $profile->area) }}" disabled
+                                class="details-field w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
                                 placeholder="e.g. Mirpur, Dhanmondi, Uttara">
                         </div>
                     </div>
@@ -186,14 +175,14 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label for="phone" class="block text-sm font-medium text-slate-300 mb-1.5">Phone Number</label>
-                            <input type="tel" name="phone" id="phone" value="{{ old('phone', $user->phone) }}"
-                                class="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300"
+                            <input type="tel" name="phone" id="phone" value="{{ old('phone', $user->phone) }}" disabled
+                                class="details-field w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
                                 placeholder="01XXXXXXXXX">
                         </div>
                         <div>
                             <label for="hourly_rate" class="block text-sm font-medium text-slate-300 mb-1.5">Hourly Rate (৳ BDT)</label>
-                            <input type="number" name="hourly_rate" id="hourly_rate" value="{{ old('hourly_rate', $profile->hourly_rate) }}" min="0" step="50"
-                                class="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300"
+                            <input type="number" name="hourly_rate" id="hourly_rate" value="{{ old('hourly_rate', $profile->hourly_rate) }}" min="0" step="50" disabled
+                                class="details-field w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
                                 placeholder="500">
                             @error('hourly_rate')
                                 <p class="mt-1.5 text-sm text-rose-400">{{ $message }}</p>
@@ -204,8 +193,8 @@
                     {{-- Experience --}}
                     <div class="w-full sm:w-1/2">
                         <label for="experience_years" class="block text-sm font-medium text-slate-300 mb-1.5">Years of Experience</label>
-                        <input type="number" name="experience_years" id="experience_years" value="{{ old('experience_years', $profile->experience_years) }}" min="0" max="50"
-                            class="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300"
+                        <input type="number" name="experience_years" id="experience_years" value="{{ old('experience_years', $profile->experience_years) }}" min="0" max="50" disabled
+                            class="details-field w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
                             placeholder="3">
                     </div>
                 </div>
@@ -221,9 +210,9 @@
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         @foreach($skills as $skill)
                             <label class="relative cursor-pointer group">
-                                <input type="checkbox" name="skills[]" value="{{ $skill->id }}" class="peer sr-only"
+                                <input type="checkbox" name="skills[]" value="{{ $skill->id }}" class="details-field peer sr-only" disabled
                                     {{ in_array($skill->id, old('skills', $userSkillIds)) ? 'checked' : '' }}>
-                                <div class="p-3 rounded-xl border-2 border-white/[0.06] bg-white/[0.02] transition-all duration-300 peer-checked:border-indigo-500/50 peer-checked:bg-indigo-500/10 peer-checked:shadow-lg peer-checked:shadow-indigo-500/5 group-hover:border-white/15 group-hover:bg-white/[0.04]">
+                                <div class="p-3 rounded-xl border-2 border-white/[0.06] bg-white/[0.02] transition-all duration-300 peer-checked:border-indigo-500/50 peer-checked:bg-indigo-500/10 peer-checked:shadow-lg peer-checked:shadow-indigo-500/5 group-hover:border-white/15 group-hover:bg-white/[0.04] peer-disabled:opacity-60 peer-disabled:cursor-not-allowed">
                                     <div class="flex items-center gap-3">
                                         <div class="w-8 h-8 rounded-lg bg-white/[0.05] flex items-center justify-center shrink-0">
                                             @switch($skill->icon)
@@ -256,10 +245,13 @@
                     </div>
                 </div>
 
-                {{-- Submit Button --}}
-                <div class="mt-6">
+                {{-- Action Buttons (hidden by default) --}}
+                <div id="detailsActions" class="mt-6 flex justify-end gap-3 hidden">
+                    <button type="button" onclick="toggleDetailsEdit()" class="px-5 py-3 rounded-xl text-slate-300 bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.06] text-sm font-semibold transition-all">
+                        Cancel
+                    </button>
                     <button type="submit"
-                        class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0">
+                        class="px-6 py-3 rounded-xl text-white bg-indigo-600 hover:bg-indigo-500 text-sm font-bold shadow-lg shadow-indigo-600/20 transition-all hover:-translate-y-0.5">
                         Save Profile
                     </button>
                 </div>
@@ -317,34 +309,44 @@
     </div>
 
     {{-- Change Password Card --}}
-    <div class="backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
-        <div class="px-6 py-5 border-b border-white/[0.06] flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-amber-500/10 flex items-center justify-center">
-                <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+    <div class="backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden animate-fade-up">
+        <div class="px-6 py-5 border-b border-white/[0.06] flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                </div>
+                <div>
+                    <h3 class="text-base font-semibold text-white">Change Password</h3>
+                    <p class="text-xs text-slate-500">Update security login credentials</p>
+                </div>
             </div>
-            <div>
-                <h3 class="text-base font-semibold text-white">Change Password</h3>
-                <p class="text-xs text-slate-500">Leave blank if you don't want to change</p>
-            </div>
+            <button type="button" id="editPasswordBtn" onclick="togglePasswordEdit()"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 hover:bg-amber-500/20 text-xs font-semibold transition-all">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                <span id="editPasswordText">Edit Password</span>
+            </button>
         </div>
-        <form method="POST" action="{{ route('provider.profile.password') }}" class="p-6">
+        <form method="POST" action="{{ route('provider.profile.password') }}" id="passwordForm" class="p-6">
             @csrf
             @method('PUT')
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label for="password" class="block text-sm font-medium text-slate-300 mb-1.5">New Password</label>
-                    <input type="password" name="password" id="password" placeholder="Minimum 6 characters" minlength="6"
-                        class="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300">
+                    <input type="password" name="password" id="password" placeholder="Minimum 6 characters" minlength="6" disabled
+                        class="password-field w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed">
                     @error('password') <p class="mt-1.5 text-sm text-rose-400">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label for="password_confirmation" class="block text-sm font-medium text-slate-300 mb-1.5">Confirm Password</label>
-                    <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Re-type password" minlength="6"
-                        class="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300">
+                    <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Re-type password" minlength="6" disabled
+                        class="password-field w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed">
                 </div>
             </div>
-            <div class="mt-4">
-                <button type="submit" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-sm font-medium transition-all hover:-translate-y-0.5">
+            <div id="passwordActions" class="mt-4 flex gap-3 hidden">
+                <button type="button" onclick="togglePasswordEdit()" class="px-5 py-2.5 rounded-xl text-slate-300 bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.06] text-sm font-semibold transition-all">
+                    Cancel
+                </button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-sm font-semibold transition-all">
                     Update Password
                 </button>
             </div>
@@ -395,5 +397,54 @@
         container.insertAdjacentHTML('beforeend', html);
         slotIndex++;
     }
+
+    let isDetailsEditing = false;
+    function toggleDetailsEdit() {
+        isDetailsEditing = !isDetailsEditing;
+        const fields = document.querySelectorAll('.details-field');
+        const actions = document.getElementById('detailsActions');
+        const editBtn = document.getElementById('editDetailsBtn');
+
+        fields.forEach(field => {
+            field.disabled = !isDetailsEditing;
+        });
+
+        if (isDetailsEditing) {
+            actions.classList.remove('hidden');
+            editBtn.classList.add('hidden');
+        } else {
+            actions.classList.add('hidden');
+            editBtn.classList.remove('hidden');
+            document.getElementById('detailsForm').reset();
+        }
+    }
+
+    let isPasswordEditing = false;
+    function togglePasswordEdit() {
+        isPasswordEditing = !isPasswordEditing;
+        const fields = document.querySelectorAll('.password-field');
+        const actions = document.getElementById('passwordActions');
+        const editBtn = document.getElementById('editPasswordBtn');
+
+        fields.forEach(field => {
+            field.disabled = !isPasswordEditing;
+        });
+
+        if (isPasswordEditing) {
+            actions.classList.remove('hidden');
+            editBtn.classList.add('hidden');
+        } else {
+            actions.classList.add('hidden');
+            editBtn.classList.remove('hidden');
+            document.getElementById('passwordForm').reset();
+        }
+    }
+
+    // Auto-open if errors exist
+    @if($errors->has('password'))
+        togglePasswordEdit();
+    @elseif($errors->any())
+        toggleDetailsEdit();
+    @endif
 </script>
 @endsection

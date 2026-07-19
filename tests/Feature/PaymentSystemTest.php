@@ -34,7 +34,7 @@ class PaymentSystemTest extends TestCase
 
         // Create a provider
         $this->provider = User::create([
-            'name' => 'Karim Provider',
+            'name' => 'Babul Provider',
             'email' => 'provider@test.com',
             'password' => bcrypt('password'),
             'role' => 'provider',

@@ -72,6 +72,11 @@ Route::middleware(['auth', 'role:admin', 'no-cache'])->prefix('admin')->name('ad
     // Withdrawals management
     Route::post('/withdrawals/{withdrawal}/status', [AdminDashboardController::class, 'updateWithdrawalStatus'])->name('withdrawals.status');
 
+    // User Management
+    Route::get('/users/{user}/edit', [AdminDashboardController::class, 'editUser'])->name('users.edit');
+    Route::put('/users/{user}', [AdminDashboardController::class, 'updateUser'])->name('users.update');
+    Route::delete('/users/{user}', [AdminDashboardController::class, 'deleteUser'])->name('users.delete');
+
     // Profile
     Route::get('/profile', [\App\Http\Controllers\UserProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [\App\Http\Controllers\UserProfileController::class, 'update'])->name('profile.update');

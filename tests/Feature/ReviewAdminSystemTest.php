@@ -33,7 +33,7 @@ class ReviewAdminSystemTest extends TestCase
 
         // Create a provider
         $this->provider = User::create([
-            'name' => 'Karim Provider',
+            'name' => 'Babul Provider',
             'email' => 'provider@test.com',
             'password' => bcrypt('password'),
             'role' => 'provider',
@@ -221,5 +221,52 @@ class ReviewAdminSystemTest extends TestCase
         $this->assertEquals('admin_new@test.com', $this->admin->email);
         $this->assertEquals('01800000000', $this->admin->phone);
         $this->assertEquals('Barisal', $this->admin->city);
+    }
+
+    /** @test */
+    public function admin_can_edit_user_details()
+    {
+        $skill = \App\Models\Skill::create(['name' => 'AC Technician', 'icon' => 'wind']);
+
+        $response = $this->actingAs($this->admin)->get(route('admin.users.edit', $this->customer->id));
+        $response->assertStatus(200);
+
+        $updateResponse = $this->actingAs($this->admin)->put(route('admin.users.update', $this->customer->id), [
+            'name' => 'Updated Customer',
+            'email' => 'updated_customer@test.com',
+            'phone' => '01511223344',
+            'city' => 'Chittagong',
+            'role' => 'provider',
+            'is_approved' => '1',
+            'skills' => [$skill->id],
+        ]);
+
+        $updateResponse->assertSessionHasNoErrors();
+        $this->customer->refresh();
+        $this->assertEquals('Updated Customer', $this->customer->name);
+        $this->assertEquals('updated_customer@test.com', $this->customer->email);
+        $this->assertEquals('01511223344', $this->customer->phone);
+        $this->assertEquals('Chittagong', $this->customer->city);
+        $this->assertEquals('provider', $this->customer->role);
+        $this->assertTrue($this->customer->is_approved);
+        $this->assertCount(1, $this->customer->skills);
+    }
+
+    /** @test */
+    public function admin_can_delete_user()
+    {
+        $response = $this->actingAs($this->admin)->delete(route('admin.users.delete', $this->customer->id));
+        $response->assertRedirect(route('admin.dashboard', ['tab' => 'users']));
+
+        $this->assertNull(User::find($this->customer->id));
+    }
+
+    /** @test */
+    public function admin_cannot_delete_themselves()
+    {
+        $response = $this->actingAs($this->admin)->delete(route('admin.users.delete', $this->admin->id));
+        $response->assertSessionHas('error', 'You cannot delete your own admin account.');
+
+        $this->assertNotNull(User::find($this->admin->id));
     }
 }

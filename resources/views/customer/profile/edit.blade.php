@@ -15,12 +15,9 @@
 
     {{-- Profile Hero Card --}}
     <div class="relative overflow-hidden backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-3xl shadow-2xl shadow-black/20">
-        <div class="h-32 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 relative">
-            <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.05%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-50"></div>
-        </div>
-        <div class="px-6 md:px-8 pb-6 -mt-14 relative">
+        <div class="px-6 md:px-8 py-6 relative">
             <div class="flex flex-col sm:flex-row items-start sm:items-end gap-4">
-                <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-3xl font-black text-white shadow-xl shadow-indigo-500/30 border-4 border-slate-950 shrink-0">
+                <div class="w-24 h-24 rounded-2xl bg-slate-700 flex items-center justify-center text-3xl font-black text-slate-200 border-4 border-slate-950 shrink-0">
                     {{ $user->initials }}
                 </div>
                 <div class="flex-1 pt-2 sm:pb-1">
@@ -36,7 +33,7 @@
                             {{ $user->phone }}
                         </span>
                         @endif
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-white/[0.05] text-slate-400 border border-white/[0.08]">
                             Customer
                         </span>
                     </div>

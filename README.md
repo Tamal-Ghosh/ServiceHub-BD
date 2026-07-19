@@ -114,7 +114,7 @@ The seeder initializes the database with pre-configured accounts:
 | **Admin** | `admin@servicehub.com` | `password` | Dashboard with approvals and database registry. |
 | **Customer 1** | `customer@test.com` | `password` | Rahim Ahmed (Dhaka). Has bookings & review history. |
 | **Customer 2** | `customer2@test.com` | `password` | Fahim Chowdhury (Chittagong). |
-| **Provider 1** | `provider@test.com` | `password` | Karim Electrician (Dhaka). Approved. Has earnings & wallet. |
+| **Provider 1** | `provider@test.com` | `password` | Babul Electrician (Dhaka). Approved. Has earnings & wallet. |
 | **Provider 2** | `kamal@test.com` | `password` | Kamal AC Tech (Chittagong). Approved. |
 | **Provider 3** | `pending@test.com` | `password` | Pending Repairer (Dhaka). Needs admin approval. |
 

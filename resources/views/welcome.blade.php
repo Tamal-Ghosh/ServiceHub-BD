@@ -458,8 +458,6 @@
         function escapeQuotes(str) {
             return str.replace(/'/g, "\\'");
         }
-
-        }
     </script>
 </body>
 </html>
