@@ -26,8 +26,8 @@ class SearchBrowseTest extends TestCase
 
         // Create provider 1
         $this->provider1 = User::create([
-            'name' => 'Karim Electrician',
-            'email' => 'karim@test.com',
+            'name' => 'Babul Electrician',
+            'email' => 'babul@test.com',
             'role' => 'provider',
             'is_approved' => true,
             'city' => 'Dhaka',
@@ -88,7 +88,7 @@ class SearchBrowseTest extends TestCase
         $response = $this->get('/');
 
         $response->assertStatus(200);
-        $response->assertSee('Karim Electrician');
+        $response->assertSee('Babul Electrician');
         $response->assertSee('Abul Plumber');
     }
 
@@ -97,7 +97,7 @@ class SearchBrowseTest extends TestCase
         $response = $this->get('/?skill=' . $this->electrician->id);
 
         $response->assertStatus(200);
-        $response->assertSee('Karim Electrician');
+        $response->assertSee('Babul Electrician');
         $response->assertDontSee('Abul Plumber');
     }
 
@@ -107,16 +107,16 @@ class SearchBrowseTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Abul Plumber');
-        $response->assertDontSee('Karim Electrician');
+        $response->assertDontSee('Babul Electrician');
     }
 
     public function test_filter_by_rating(): void
     {
-        // Filter for 4+ rating (Only Karim should show, since Abul is 3.0)
+        // Filter for 4+ rating (Only Babul should show, since Abul is 3.0)
         $response = $this->get('/?rating=4');
 
         $response->assertStatus(200);
-        $response->assertSee('Karim Electrician');
+        $response->assertSee('Babul Electrician');
         $response->assertDontSee('Abul Plumber');
     }
 
@@ -125,7 +125,7 @@ class SearchBrowseTest extends TestCase
         $response = $this->get(route('provider.profile.show', $this->provider1->id));
 
         $response->assertStatus(200);
-        $response->assertSee('Karim Electrician');
+        $response->assertSee('Babul Electrician');
         $response->assertSee('Excellent electrical work!');
         $response->assertSee('Rahim Customer');
     }
@@ -143,7 +143,7 @@ class SearchBrowseTest extends TestCase
             'skills' => [$this->electrician->id, $this->plumber->id],
         ]);
 
-        $response->assertRedirect(route('provider.pending'));
+        $response->assertRedirect(route('login'));
 
         // Assert user exists and is not approved
         $user = User::where('email', 'newprovider@test.com')->first();

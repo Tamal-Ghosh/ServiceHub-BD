@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
@@ -61,16 +60,10 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
+        $message = $user->role === 'provider'
+            ? 'Registration successful! Your provider account is pending admin approval. Please log in.'
+            : 'Registration successful! Please log in with your new credentials.';
 
-        if ($user->isProvider() && !$user->is_approved) {
-            return redirect()->route('provider.pending');
-        }
-
-        return match ($user->role) {
-            'admin' => redirect()->route('admin.dashboard'),
-            'provider' => redirect()->route('provider.dashboard'),
-            default => redirect()->route('customer.dashboard'),
-        };
+        return redirect()->route('login')->with('status', $message);
     }
 }

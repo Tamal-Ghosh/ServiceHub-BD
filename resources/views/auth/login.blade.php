@@ -103,15 +103,7 @@
             </button>
         </form>
 
-        {{-- Demo credentials --}}
-        <div class="mt-5 p-3 rounded-xl bg-slate-800/50 border border-slate-700/50">
-            <p class="text-xs text-slate-500 font-medium mb-2">Demo Accounts:</p>
-            <div class="space-y-1 text-xs text-slate-400">
-                <p><span class="text-indigo-400">Admin:</span> admin@servicehub.com / password</p>
-                <p><span class="text-blue-400">Customer:</span> customer@test.com / password</p>
-                <p><span class="text-purple-400">Provider:</span> provider@test.com / password</p>
-            </div>
-        </div>
+
 
         {{-- Register link --}}
         <p class="text-center text-slate-400 text-sm mt-6">

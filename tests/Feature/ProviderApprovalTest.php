@@ -25,7 +25,7 @@ class ProviderApprovalTest extends TestCase
             'skills' => [$skill->id],
         ]);
 
-        $response->assertRedirect(route('provider.pending'));
+        $response->assertRedirect(route('login'));
 
         $user = User::where('email', 'john@example.com')->first();
         $this->assertNotNull($user);
